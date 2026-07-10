@@ -5,7 +5,7 @@ with a **real shared database**. Every user (Manager, SAP, Inventory, Projects..
 into the same server and sees the same data — this is a real client/server app, not a
 single-browser demo.
 
-- **Backend:** Node.js + Express + SQLite (`better-sqlite3`) — one file database (`data/erp.sqlite`)
+- **Backend:** Node.js + Express — a small server-side JSON store (`data/db.json`), **zero native dependencies** (no compile step, builds instantly on any host)
 - **Frontend:** single `public/index.html` (HTML/CSS/JS, Chart.js) served by the same server
 - **Auth:** username/password, hashed with scrypt, session tokens
 - **No external services required** — everything runs from one small Node app
@@ -26,7 +26,7 @@ Open **http://localhost:3000**. The first person to open the app creates the **M
 account. The Manager can then create other users and choose which pages (SAP / Inventory /
 Projects) each one can access.
 
-All data lives in `data/erp.sqlite`, created automatically on first run. Back it up like any
+All data lives in `data/db.json`, created automatically on first run. Back it up like any
 normal file (copy it, put it on a schedule, etc.).
 
 ---
@@ -47,7 +47,7 @@ a static-file host. Any of the following work well and have free tiers:
 ### Option B — Railway.app
 1. Push to GitHub → on [railway.app](https://railway.app), **New Project** → **Deploy from GitHub repo**.
 2. Railway auto-detects Node, runs `npm install` and `npm start`.
-3. Add a **Volume** mounted at `/app/data` so `data/erp.sqlite` persists across deploys.
+3. Add a **Volume** mounted at `/app/data` so `data/db.json` persists across deploys.
 
 ### Option C — Any VPS (DigitalOcean, OVH, Hetzner...)
 1. Install Node.js 18+ on the server.
@@ -89,7 +89,7 @@ erp-control-center/
 ├── package.json
 ├── public/
 │   └── index.html      → the entire frontend (HTML+CSS+JS)
-└── data/                → created automatically, contains erp.sqlite (your database)
+└── data/                → created automatically, contains db.json (your database)
 ```
 
 ---
@@ -111,58 +111,3 @@ navigateur de chacun.
 
 Le premier qui ouvre le site crée le compte **Manager**. Ensuite, seul le Manager peut créer
 des utilisateurs et choisir à quelles pages (SAP / Inventaire / Projets) chacun a accès.
-
-
-
-cd erp-project
-git init
-git add .
-git commit -m "Initial commit - ERP Control Center"
-
-Va sur github.com → New repository (nomme-le par ex. erp-control-center) → laisse-le vide (sans README).
-GitHub te donne des commandes du genre :
-
-bashgit remote add origin https://github.com/TON_USERNAME/erp-control-center.git
-git branch -M main
-git push -u origin main
-Exécute-les depuis le dossier erp-project.
-Étape 2 — Créer un compte Railway
-
-Va sur railway.app → Login → connecte-toi avec ton compte GitHub (recommandé, plus rapide et évite les frictions de vérification).
-Aucune carte demandée à cette étape.
-
-Étape 3 — Déployer le projet
-
-Dans le dashboard Railway → New Project
-Choisis Deploy from GitHub repo
-Autorise Railway à accéder à tes repos GitHub, puis sélectionne erp-control-center
-Railway détecte automatiquement que c'est un projet Node.js (grâce à package.json) et lance :
-
-npm install
-npm start
-
-
-Le déploiement démarre tout seul (regarde les logs en direct dans l'onglet Deployments)
-
-Étape 4 — Ajouter un stockage persistant (⚠️ étape critique)
-Sans ça, ta base SQLite (data/erp.sqlite) sera supprimée à chaque redéploiement.
-
-Clique sur ton service dans le projet Railway
-Onglet Settings → section Volumes → New Volume
-Mount path : /app/data
-Sauvegarde — Railway redéploie automatiquement
-
-Étape 5 — Générer une URL publique
-
-Toujours dans ton service → onglet Settings → section Networking
-Clique Generate Domain
-Railway te donne une URL du type https://erp-control-center-production.up.railway.app
-
-Étape 6 — Tester
-
-Ouvre l'URL générée
-La première personne qui ouvre le site crée le compte Manager
-Tout fonctionne exactement comme en local — mais maintenant tout le monde partage la même base de données 🎉
-
-
-Résumé du suivi des coûts : Railway te donne $5 de crédit gratuit valables 30 jours, sans carte. Pour une petite app comme la nôtre (Node + SQLite, faible trafic), ça peut tenir 1 à 3 semaines selon l'usage. Après ça, si tu veux continuer sur Railway, il faudra ajouter une carte (plan Hobby à $5/mois).

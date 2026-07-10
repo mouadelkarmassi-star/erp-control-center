@@ -1,7 +1,7 @@
 {
   "name": "erp-control-center",
   "version": "1.0.0",
-  "description": "ERP Control Center - shared multi-user dashboard (SAP Master Data, Inventory, Projects) with SQLite backend.",
+  "description": "ERP Control Center - shared multi-user dashboard (SAP Master Data, Inventory, Projects) with a lightweight JSON-file backend, no native dependencies.",
   "main": "server.js",
   "engines": { "node": ">=18" },
   "scripts": {
@@ -9,7 +9,6 @@
   },
   "license": "ISC",
   "dependencies": {
-    "better-sqlite3": "^12.11.1",
     "express": "^4.22.2"
   }
 }

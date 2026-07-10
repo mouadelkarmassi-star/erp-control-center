@@ -1,46 +1,23 @@
 /* ======================================================================
    ERP CONTROL CENTER — BACKEND SERVER
-   Node.js + Express + SQLite (better-sqlite3)
-   Provides a real shared database so every logged-in user (Manager,
-   SAP, Inventory, Projects...) sees and edits the SAME data.
+   Node.js + Express + a lightweight server-side JSON store (db.json).
+   No native modules, no compilation step — builds instantly on any host
+   (Railway, Render, Bonto, a VPS...). Every logged-in user reads/writes
+   the SAME server-side file, so data (KPIs, tickets, projects, reports)
+   is shared between Manager <-> SAP <-> Inventory <-> Projects.
    ====================================================================== */
 const express = require("express");
 const path = require("path");
+const fs = require("fs");
 const crypto = require("crypto");
-const Database = require("better-sqlite3");
 
 const PORT = process.env.PORT || 3000;
-const DB_FILE = path.join(__dirname, "data", "erp.sqlite");
+const DATA_DIR = path.join(__dirname, "data");
+const DB_FILE = path.join(DATA_DIR, "db.json");
 
 // ---------------------------------------------------------------------
-// DB SETUP
+// DEFAULT / SHARED STATE SHAPE
 // ---------------------------------------------------------------------
-const fs = require("fs");
-if (!fs.existsSync(path.join(__dirname, "data"))) fs.mkdirSync(path.join(__dirname, "data"));
-const db = new Database(DB_FILE);
-db.pragma("journal_mode = WAL");
-
-db.exec(`
-CREATE TABLE IF NOT EXISTS users (
-  id TEXT PRIMARY KEY,
-  username TEXT UNIQUE NOT NULL,
-  password_hash TEXT NOT NULL,
-  role TEXT NOT NULL,        -- 'manager' | 'user'
-  pages TEXT NOT NULL,       -- JSON array e.g. ["sap","inventory"]
-  created_at TEXT NOT NULL
-);
-CREATE TABLE IF NOT EXISTS sessions (
-  token TEXT PRIMARY KEY,
-  user_id TEXT NOT NULL,
-  created_at TEXT NOT NULL
-);
-CREATE TABLE IF NOT EXISTS app_state (
-  id INTEGER PRIMARY KEY CHECK (id = 1),
-  data TEXT NOT NULL
-);
-`);
-
-// Seed the single shared app_state row (kpis / projects / tickets / reports / settings)
 const DEFAULT_STATE = {
   kpis: {
     sap: { client: [], supplier: [], production: [], reception: [], shipping: [] },
@@ -51,13 +28,45 @@ const DEFAULT_STATE = {
   reports: { sap: [], inventory: [], projects: [] },
   settings: { theme: "dark", lang: "en" }
 };
-const existingState = db.prepare("SELECT data FROM app_state WHERE id = 1").get();
-if (!existingState) {
-  db.prepare("INSERT INTO app_state (id, data) VALUES (1, ?)").run(JSON.stringify(DEFAULT_STATE));
+function defaultDB() {
+  return { users: [], sessions: [], appState: JSON.parse(JSON.stringify(DEFAULT_STATE)) };
 }
 
 // ---------------------------------------------------------------------
-// PASSWORD HASHING (scrypt, built into Node — no extra native deps)
+// FILE-BASED STORE (atomic writes, in-memory cache, synchronous — fine
+// for a small internal team tool; avoids any native/database driver).
+// ---------------------------------------------------------------------
+if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+
+let store;
+function loadStore() {
+  try {
+    if (!fs.existsSync(DB_FILE)) {
+      store = defaultDB();
+      persist();
+      return;
+    }
+    const raw = fs.readFileSync(DB_FILE, "utf8");
+    const parsed = JSON.parse(raw);
+    store = Object.assign(defaultDB(), parsed, {
+      appState: Object.assign(JSON.parse(JSON.stringify(DEFAULT_STATE)), parsed.appState || {})
+    });
+  } catch (e) {
+    console.error("Failed to load database, starting fresh:", e.message);
+    store = defaultDB();
+  }
+}
+function persist() {
+  // Atomic write: write to a temp file then rename, to avoid a corrupted
+  // db.json if the process is killed mid-write.
+  const tmp = DB_FILE + ".tmp";
+  fs.writeFileSync(tmp, JSON.stringify(store, null, 2));
+  fs.renameSync(tmp, DB_FILE);
+}
+loadStore();
+
+// ---------------------------------------------------------------------
+// PASSWORD HASHING (scrypt, built into Node — zero extra dependencies)
 // ---------------------------------------------------------------------
 function hashPassword(password) {
   const salt = crypto.randomBytes(16).toString("hex");
@@ -70,6 +79,7 @@ function verifyPassword(password, stored) {
   return crypto.timingSafeEqual(Buffer.from(hash, "hex"), Buffer.from(check, "hex"));
 }
 function newToken() { return crypto.randomBytes(32).toString("hex"); }
+function newId(prefix) { return prefix + "_" + crypto.randomBytes(8).toString("hex"); }
 function nowIso() { return new Date().toISOString(); }
 
 // ---------------------------------------------------------------------
@@ -79,8 +89,8 @@ const app = express();
 app.use(express.json({ limit: "30mb" })); // generous limit: state blob includes base64 screenshots/files
 app.use(express.static(path.join(__dirname, "public")));
 
-function publicUser(row) {
-  return { id: row.id, username: row.username, role: row.role, pages: JSON.parse(row.pages), createdAt: row.created_at };
+function publicUser(u) {
+  return { id: u.id, username: u.username, role: u.role, pages: u.pages, createdAt: u.createdAt };
 }
 
 // --- Auth middleware ---
@@ -88,11 +98,12 @@ function auth(req, res, next) {
   const header = req.headers.authorization || "";
   const token = header.startsWith("Bearer ") ? header.slice(7) : null;
   if (!token) return res.status(401).json({ error: "Not authenticated." });
-  const session = db.prepare("SELECT * FROM sessions WHERE token = ?").get(token);
+  const session = store.sessions.find(s => s.token === token);
   if (!session) return res.status(401).json({ error: "Session expired." });
-  const user = db.prepare("SELECT * FROM users WHERE id = ?").get(session.user_id);
+  const user = store.users.find(u => u.id === session.userId);
   if (!user) return res.status(401).json({ error: "User not found." });
   req.user = user;
+  req.token = token;
   next();
 }
 function requireManager(req, res, next) {
@@ -104,45 +115,43 @@ function requireManager(req, res, next) {
 // SETUP / AUTH ROUTES
 // -----------------------------------------------------------------
 app.get("/api/needs-setup", (req, res) => {
-  const count = db.prepare("SELECT COUNT(*) c FROM users").get().c;
-  res.json({ needsSetup: count === 0 });
+  res.json({ needsSetup: store.users.length === 0 });
 });
 
 app.get("/api/usernames", (req, res) => {
-  const rows = db.prepare("SELECT username FROM users").all();
-  res.json({ usernames: rows.map(r => r.username) });
+  res.json({ usernames: store.users.map(u => u.username) });
 });
 
 app.post("/api/setup", (req, res) => {
-  const count = db.prepare("SELECT COUNT(*) c FROM users").get().c;
-  if (count > 0) return res.status(400).json({ error: "Setup already completed." });
+  if (store.users.length > 0) return res.status(400).json({ error: "Setup already completed." });
   const { username, password } = req.body || {};
   if (!username || !password) return res.status(400).json({ error: "Missing fields." });
-  const id = "usr_" + crypto.randomBytes(8).toString("hex");
-  db.prepare(
-    "INSERT INTO users (id, username, password_hash, role, pages, created_at) VALUES (?,?,?,?,?,?)"
-  ).run(id, username, hashPassword(password), "manager", JSON.stringify(["sap", "inventory", "projects"]), nowIso());
+  const user = {
+    id: newId("usr"), username, passwordHash: hashPassword(password),
+    role: "manager", pages: ["sap", "inventory", "projects"], createdAt: nowIso()
+  };
+  store.users.push(user);
   const token = newToken();
-  db.prepare("INSERT INTO sessions (token, user_id, created_at) VALUES (?,?,?)").run(token, id, nowIso());
-  const user = db.prepare("SELECT * FROM users WHERE id = ?").get(id);
+  store.sessions.push({ token, userId: user.id, createdAt: nowIso() });
+  persist();
   res.json({ token, user: publicUser(user) });
 });
 
 app.post("/api/login", (req, res) => {
   const { username, password } = req.body || {};
-  const user = db.prepare("SELECT * FROM users WHERE username = ?").get(username);
-  if (!user || !verifyPassword(password || "", user.password_hash)) {
+  const user = store.users.find(u => u.username === username);
+  if (!user || !verifyPassword(password || "", user.passwordHash)) {
     return res.status(401).json({ error: "Invalid username or password." });
   }
   const token = newToken();
-  db.prepare("INSERT INTO sessions (token, user_id, created_at) VALUES (?,?,?)").run(token, user.id, nowIso());
+  store.sessions.push({ token, userId: user.id, createdAt: nowIso() });
+  persist();
   res.json({ token, user: publicUser(user) });
 });
 
 app.post("/api/logout", auth, (req, res) => {
-  const header = req.headers.authorization || "";
-  const token = header.slice(7);
-  db.prepare("DELETE FROM sessions WHERE token = ?").run(token);
+  store.sessions = store.sessions.filter(s => s.token !== req.token);
+  persist();
   res.json({ ok: true });
 });
 
@@ -150,8 +159,7 @@ app.post("/api/logout", auth, (req, res) => {
 // USERS (Manager only for create/delete)
 // -----------------------------------------------------------------
 app.get("/api/users", auth, (req, res) => {
-  const rows = db.prepare("SELECT * FROM users").all();
-  res.json({ users: rows.map(publicUser) });
+  res.json({ users: store.users.map(publicUser) });
 });
 
 app.post("/api/users", auth, requireManager, (req, res) => {
@@ -159,49 +167,49 @@ app.post("/api/users", auth, requireManager, (req, res) => {
   if (!username || !password || !Array.isArray(pages) || pages.length === 0) {
     return res.status(400).json({ error: "Missing fields." });
   }
-  const exists = db.prepare("SELECT id FROM users WHERE username = ?").get(username);
-  if (exists) return res.status(400).json({ error: "Username already exists." });
-  const id = "usr_" + crypto.randomBytes(8).toString("hex");
-  db.prepare(
-    "INSERT INTO users (id, username, password_hash, role, pages, created_at) VALUES (?,?,?,?,?,?)"
-  ).run(id, username, hashPassword(password), "user", JSON.stringify(pages), nowIso());
-  const user = db.prepare("SELECT * FROM users WHERE id = ?").get(id);
+  if (store.users.some(u => u.username === username)) {
+    return res.status(400).json({ error: "Username already exists." });
+  }
+  const user = {
+    id: newId("usr"), username, passwordHash: hashPassword(password),
+    role: "user", pages, createdAt: nowIso()
+  };
+  store.users.push(user);
+  persist();
   res.json({ user: publicUser(user) });
 });
 
 app.delete("/api/users/:id", auth, requireManager, (req, res) => {
-  const target = db.prepare("SELECT * FROM users WHERE id = ?").get(req.params.id);
+  const target = store.users.find(u => u.id === req.params.id);
   if (!target) return res.status(404).json({ error: "User not found." });
   if (target.role === "manager") return res.status(400).json({ error: "Cannot delete the Manager account." });
-  db.prepare("DELETE FROM users WHERE id = ?").run(req.params.id);
-  db.prepare("DELETE FROM sessions WHERE user_id = ?").run(req.params.id);
+  store.users = store.users.filter(u => u.id !== req.params.id);
+  store.sessions = store.sessions.filter(s => s.userId !== req.params.id);
+  persist();
   res.json({ ok: true });
 });
 
 // -----------------------------------------------------------------
 // SHARED APP STATE (kpis / projects / tickets / reports / settings)
-// Every authenticated user reads & writes the SAME row — this is what
+// Every authenticated user reads & writes the SAME object — this is what
 // makes data visible between users (Manager <-> SAP <-> Inventory ...).
 // Passwords never travel through this endpoint.
 // -----------------------------------------------------------------
 app.get("/api/state", auth, (req, res) => {
-  const row = db.prepare("SELECT data FROM app_state WHERE id = 1").get();
-  const data = JSON.parse(row.data);
-  const users = db.prepare("SELECT * FROM users").all().map(publicUser);
-  res.json({ state: data, users, me: publicUser(req.user) });
+  res.json({ state: store.appState, users: store.users.map(publicUser), me: publicUser(req.user) });
 });
 
 app.post("/api/state", auth, (req, res) => {
   const incoming = req.body || {};
   // Only these keys are persisted here — users are managed via /api/users only.
-  const safe = {
+  store.appState = {
     kpis: incoming.kpis || DEFAULT_STATE.kpis,
     projects: incoming.projects || [],
     tickets: incoming.tickets || DEFAULT_STATE.tickets,
     reports: incoming.reports || DEFAULT_STATE.reports,
     settings: incoming.settings || DEFAULT_STATE.settings
   };
-  db.prepare("UPDATE app_state SET data = ? WHERE id = 1").run(JSON.stringify(safe));
+  persist();
   res.json({ ok: true });
 });
 
