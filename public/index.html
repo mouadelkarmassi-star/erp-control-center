@@ -1318,7 +1318,7 @@ function openEditValueModal(pageKey, subKey, kpiId, body){
   const suf = unitSuffix(k.unit);
   const html = `
     <div class="modal-head"><h3>${t('editValueTitle')}</h3><button class="modal-close" data-close>✕</button></div>
-    <div class="field"><label>${escHtml(k.name)} — ${t('currentValue')} (${suf||t('unitNumber')})</label><input id="vNew" type="number" step="any" value="${k.current}"></div>
+    <div class="field"><label>${escHtml(k.name)} — ${t('currentValue')} (${suf||t('unitNumber')})</label><input id="vNew" type="text" value="${escAttr(k.current)}"></div>
     <div class="field"><label>${t('editValueComment')}</label><textarea id="vComment" rows="3" placeholder="${t('editValueComment')}"></textarea></div>
     <div class="error-msg" id="vErr"></div>
     <div class="modal-actions">
