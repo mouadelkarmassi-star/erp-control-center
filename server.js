@@ -222,6 +222,19 @@ app.post("/api/state", auth, (req, res) => {
 });
 
 // -----------------------------------------------------------------
+// ADMIN: full database wipe — protected by a secret key.
+// -----------------------------------------------------------------
+app.post("/api/admin/reset", (req, res) => {
+  const key = req.query.key;
+  if (!process.env.RESET_KEY || key !== process.env.RESET_KEY) {
+    return res.status(403).json({ error: "Invalid or missing reset key." });
+  }
+  store = defaultDB();
+  persist();
+  res.json({ ok: true, message: "Database wiped. Reload the app to create a new Manager account." });
+});
+
+// -----------------------------------------------------------------
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
