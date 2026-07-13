@@ -177,6 +177,9 @@ body.light .field input,body.light .field select,body.light .field textarea{back
 }
 .sb-brand{display:flex;align-items:center;gap:10px;padding:6px 8px 24px;}
 .sb-brand .mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:800;color:#04140F;font-family:var(--ff-display);font-size:15px;flex-shrink:0;}
+.logo-mark{background:transparent !important;padding:2px;}
+.logo-mark img{width:100%;height:100%;object-fit:contain;display:block;}
+.mark-fallback{display:none;width:100%;height:100%;align-items:center;justify-content:center;}
 .sb-brand span{font-family:var(--ff-display);font-weight:700;font-size:16px;}
 .sb-nav{display:flex;flex-direction:column;gap:4px;flex:1;overflow-y:auto;}
 .sb-item{
@@ -451,8 +454,12 @@ textarea.comment-box{width:100%;min-height:50px;font-size:12.5px;padding:8px 10p
 <div id="app" class="hidden">
   <aside class="sidebar" id="sidebar">
     <div class="sb-brand">
-      <div class="mark">ST</div>
-      <span data-i18n="brandName">VALEO-Power</span>
+      <div class="mark logo-mark">
+        <img src="logo.png" alt="Valeo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <span class="mark-fallback">ST</span>
+      </div>
+      <span data-i18n="brandName">Supply Team
+      </span>
     </div>
     <nav class="sb-nav" id="sbNav"></nav>
     <div class="sb-foot">
@@ -755,7 +762,7 @@ async function renderLogin(){
     needsSetup = res.needsSetup;
   }catch(e){
     box.innerHTML = `<div style="padding:10px;text-align:center;">
-      <div class="login-brand" style="justify-content:center;"><div class="mark">ST</div><h1>${t('brandName')}</h1></div>
+      <div class="mark logo-mark"><img src="logo.png" alt="Valeo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><span class="mark-fallback">ST</span></div>
       <p class="error-msg" style="margin-top:14px;">Cannot reach the server. Is it running?</p>
     </div>`;
     return;
@@ -763,7 +770,7 @@ async function renderLogin(){
 
   if(needsSetup){
     box.innerHTML = `
-      <div class="login-brand"><div class="mark">ST</div><h1>${t('brandName')}</h1></div>
+      <div class="mark logo-mark"><img src="logo.png" alt="Valeo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><span class="mark-fallback">ST</span></div>
       <div class="login-sub">${t('loginSubSetup')}</div>
       <div class="field"><label>${t('username')}</label><input id="setupUser" type="text" autocomplete="off"></div>
       <div class="field"><label>${t('password')}</label><input id="setupPass" type="password"></div>
@@ -788,7 +795,7 @@ async function renderLogin(){
     let usernames = [];
     try{ usernames = (await api("/api/usernames")).usernames; }catch(e){}
     box.innerHTML = `
-      <div class="login-brand"><div class="mark">ST</div><h1>${t('welcomeBack')}</h1></div>
+      <div class="mark logo-mark"><img src="logo.png" alt="Valeo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><span class="mark-fallback">ST</span></div>
       <div class="login-sub">${t('loginSub')}</div>
       <div class="field"><label>${t('username')}</label><input id="loginUser" type="text" list="userList" autocomplete="off"></div>
       <datalist id="userList">${usernames.map(u=>`<option value="${escAttr(u)}">`).join("")}</datalist>

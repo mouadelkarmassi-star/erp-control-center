@@ -101,13 +101,6 @@ connectent au **même serveur**, donc ils voient **les mêmes données** (KPI, t
 projets, rapports) — contrairement à la version précédente qui stockait tout dans le
 navigateur de chacun.
 
-**Pour l'héberger :** il te faut un hébergeur capable de faire tourner un serveur Node.js
-(Render.com ou Railway.app sont les plus simples, avec une offre gratuite). Il suffit de :
-1. Mettre ce dossier sur GitHub.
-2. Connecter le repo à Render/Railway.
-3. Build command : `npm install` — Start command : `npm start`.
-4. Ajouter un disque/volume persistant sur le dossier `data/` pour ne jamais perdre la base
-   de données entre deux redéploiements.
+--- for wiping the data base ---
+curl -X POST "https://erp-control-center-production.up.railway.app/api/admin/reset?key=Valeo2026Reset"
 
-Le premier qui ouvre le site crée le compte **Manager**. Ensuite, seul le Manager peut créer
-des utilisateurs et choisir à quelles pages (SAP / Inventaire / Projets) chacun a accès.
