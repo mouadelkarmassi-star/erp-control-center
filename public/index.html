@@ -1116,7 +1116,11 @@ function renderDeptPage(main, pageKey, kpiSubs){
 
 /* ---------------- KPI SECTION (shared by SAP & Inventory) ---------------- */
 function getKpiArr(pageKey, subKey){ return db.kpis[pageKey][subKey]; }
-function computeAchievement(k){ if(!k.target || k.target===0) return 0; return Math.round((k.current/k.target)*1000)/10; }
+function computeAchievement(k){
+  const cur = Number(k.current);
+  if(!k.target || k.target===0 || isNaN(cur)) return 0;
+  return Math.round((cur/k.target)*1000)/10;
+}
 function achColor(pct){ if(pct>=90) return "green"; if(pct>=60) return "amber"; return "red"; }
 function unitSuffix(unit){ return unit==="%" ? "%" : unit==="number" ? "" : "K€"; }
 function unitLabel(unit){ return unit==="%" ? t('unitPct') : unit==="number" ? t('unitNumber') : t('unitK'); }
@@ -1244,8 +1248,11 @@ function drawKpiChart(canvasId, k){
   if(state.charts[canvasId]){ state.charts[canvasId].destroy(); }
   const hist = (k.history && k.history.length) ? k.history : [{date:nowStr(), newValue:k.current}];
   const labels = hist.map(h=>h.date);
-  const values = hist.map(h=> h.newValue!==undefined ? h.newValue : h.value);
-  const isLight = state.theme==="light";
+  const values = hist.map(h=>{
+  const v = h.newValue!==undefined ? h.newValue : h.value;
+  const num = Number(v);
+    return isNaN(num) ? 0 : num; // les valeurs texte apparaissent comme 0 sur le graphique
+  });  const isLight = state.theme==="light";
   const gridColor = isLight ? "rgba(20,30,60,0.08)" : "rgba(255,255,255,0.08)";
   const textColor = isLight ? "#4C5573" : "#95A0C2";
   state.charts[canvasId] = new Chart(ctx, {
