@@ -271,7 +271,7 @@ table.data-table{width:100%;border-collapse:collapse;min-width:640px;}
 .data-table tbody tr{transition:background .15s;}
 .data-table tbody tr:hover{background:var(--panel-strong);}
 .data-table tbody tr:last-child td{border-bottom:none;}
-.row-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.row-actions{display:flex;gap:8px;}
 .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:11.5px;font-weight:700;}
 .pill-green{background:rgba(58,219,143,.15);color:var(--green);}
 .pill-amber{background:rgba(255,176,32,.15);color:var(--amber);}
@@ -292,15 +292,24 @@ table.data-table{width:100%;border-collapse:collapse;min-width:640px;}
 .progress-mini{width:120px;height:8px;border-radius:8px;background:rgba(127,140,180,.18);overflow:hidden;}
 .progress-mini > div{height:100%;background:linear-gradient(90deg,var(--accent-2),var(--accent));}
 
+/* ---------- TICKETS ---------- */
+.ticket-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+.ticket-card{padding:18px;cursor:pointer;transition:.2s;}
+.ticket-card:hover{transform:translateY(-3px);border-color:rgba(124,92,252,.4);}
+.ticket-card .th{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:8px;}
+.ticket-card h4{font-size:14.5px;}
+.ticket-card p{font-size:12.5px;color:var(--text-dim);margin-top:6px;line-height:1.5;max-height:56px;overflow:hidden;}
+.ticket-card .meta{margin-top:12px;font-size:11px;color:var(--text-faint);display:flex;justify-content:space-between;}
+
 /* ---------- REPORTS ---------- */
 .file-row{display:flex;align-items:center;gap:14px;padding:13px 16px;border-radius:12px;border:1px solid var(--border-soft);margin-bottom:10px;transition:.2s;}
 .file-row:hover{background:var(--panel-strong);}
-.file-ic{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,rgba(0,217,192,.2),rgba(124,92,252,.15));display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;}
+.file-ic{width:38px;height:38px;bo rder-radius:10px;background:linear-gradient(135deg,rgba(0,217,192,.2),rgba(124,92,252,.15));display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;}
 .file-info{flex:1;min-width:0;}
 .file-info .fn{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .file-info .fm{font-size:11.5px;color:var(--text-faint);}
 
-/* ---------- MODAL ---------- */
+/* ---------- MODAL ---------- */ 
 .modal-overlay{
   position:fixed;inset:0;background:rgba(4,7,16,0.6);backdrop-filter:blur(4px);
   display:flex;align-items:center;justify-content:center;z-index:100;padding:20px;
@@ -311,7 +320,7 @@ table.data-table{width:100%;border-collapse:collapse;min-width:640px;}
 .modal-head h3{font-size:18px;}
 .modal-close{width:30px;height:30px;border-radius:9px;background:var(--panel-strong);border:1px solid var(--border);color:var(--text-dim);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .modal-close:hover{color:var(--red);}
-.modal-actions{display:flex;gap:10px;margin-top:22px;justify-content:flex-end;flex-wrap:wrap;}
+.modal-actions{display:flex;gap:10px;margin-top:22px;justify-content:flex-end;}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 @media(max-width:480px){.two-col{grid-template-columns:1fr;}}
 
@@ -335,15 +344,6 @@ textarea.comment-box{width:100%;min-height:50px;font-size:12.5px;padding:8px 10p
 .screenshot-preview{max-width:100%;border-radius:10px;margin-top:10px;border:1px solid var(--border);}
 .status-open{color:var(--amber);}
 .status-closed{color:var(--text-faint);}
-.evidence-link{color:var(--accent);font-weight:600;text-decoration:none;word-break:break-all;}
-.evidence-link:hover{text-decoration:underline;}
-.tag-pill{display:inline-flex;align-items:center;padding:3px 9px;border-radius:7px;font-size:11px;font-weight:700;background:rgba(124,92,252,.14);color:var(--accent-2);margin:2px;}
-.history-list{max-height:220px;overflow-y:auto;border:1px solid var(--border-soft);border-radius:10px;padding:4px 0;}
-.history-row{padding:10px 14px;border-bottom:1px solid var(--border-soft);font-size:12.5px;}
-.history-row:last-child{border-bottom:none;}
-.history-row .hh{display:flex;justify-content:space-between;color:var(--text-faint);font-size:11px;margin-bottom:4px;}
-.history-row .hv{color:var(--text);}
-.history-row .hc{color:var(--text-dim);margin-top:4px;font-style:italic;}
 
 @media (max-width:960px){
   .sidebar{position:fixed;left:-280px;top:0;height:100vh;transition:left .3s ease;box-shadow:0 0 0 100vmax rgba(0,0,0,0);}
@@ -427,9 +427,8 @@ en:{
   invalidCredentials:"Invalid username or password.", userExists:"This username already exists.",
   logout:"Logout", manager:"Manager", user:"User",
   navUsers:"Users & Access", navSap:"SAP Master Data", navInventory:"Inventory", navProjects:"Projects",
-  navBlocking:"Blocking Points", navAssignments:"Assignments",
   subClient:"Client", subSupplier:"Supplier", subProduction:"Production", subReception:"Reception", subShipping:"Shipping",
-  subQuality:"Quality", subReports:"Reports", subMain:"Overview",
+  subQuality:"Quality", subTickets:"Tickets", subReports:"Reports", subMain:"Overview",
   kpiTableTitle:"KPI Tracking", addKpi:"+ Add KPI", kpiName:"KPI Name", currentValue:"Current Value",
   targetValue:"Target Value", targetUnit:"Target Unit", frequency:"Frequency", achievement:"Achievement %",
   editValue:"Edit Value", deleteKpi:"Delete KPI", cancel:"Cancel", save:"Save", create:"Create",
@@ -448,33 +447,25 @@ en:{
   progress:"% Progress", comments:"Comments", editComment:"Edit Comment", commentTitle:"Milestone Comment",
   noProjects:"No projects yet", noProjectsSub:"Create your first project to start tracking milestones.",
   noMilestones:"No milestones added yet.",
+  ticketsTitle:"Tickets", ticketsSub:"Direct communication channel with the Manager.",
+  openTicket:"+ Open Ticket", newTicketTitle:"Open New Ticket", ticketTitleField:"Title", description:"Description",
+  errorLocation:"Location of Error", uploadScreenshot:"Upload Screenshot", noTickets:"No tickets yet",
+  noTicketsSub:"Open a ticket to communicate an issue to the Manager.", status:"Status", open:"Open", closed:"Closed",
+  editTicket:"Edit Ticket", closeTicket:"Close Ticket", openedBy:"Opened by", ticketDetails:"Ticket Details",
   reportsTitle:"Reports", reportsSub:"Import and export documents for this department.",
   importFile:"+ Import File/Document", exportFile:"Export", noFiles:"No files imported yet",
   noFilesSub:"Import your first document to build the archive.", uploadedBy:"Uploaded by", fileName:"File Name",
   selectFile:"Choose a file", date:"Date", actions:"Actions", welcomeBack:"Welcome back",
   toastKpiAdded:"KPI added.", toastKpiDeleted:"KPI deleted.", toastValueUpdated:"Value updated.",
   toastProjectCreated:"Project created.", toastMilestoneAdded:"Milestone added.", toastMilestoneDeleted:"Milestone deleted.",
-  toastCommentSaved:"Comment saved.", toastFileImported:"File imported.", toastUserDeleted:"User deleted.",
+  toastCommentSaved:"Comment saved.", toastTicketOpened:"Ticket opened.", toastTicketUpdated:"Ticket updated.",
+  toastTicketClosed:"Ticket closed.", toastFileImported:"File imported.", toastUserDeleted:"User deleted.",
+  reply:"Manager Reply", noReplyYet:"No reply yet.", writeReply:"Write a reply...", saveReply:"Save Reply",
   currentValueShort:"Current", targetShort:"Target", overview:"Overview", totalKpis:"Total KPIs",
   onTrack:"On Track", avgAchievement:"Avg. Achievement", totalUsers:"Total Users", totalProjects:"Total Projects",
-  noPages:"No pages assigned yet — contact your Manager.",
+  openTickets:"Open Tickets", noPages:"No pages assigned yet — contact your Manager.",
   requiredNoAccess:"You do not have access to this page.", history:"History", value:"Value",
-  responsible:"Responsible", kpiComment:"Comment", editValueComment:"Comment (required)",
-  previousValue:"Previous", newValue:"New", modificationDate:"Date", commentRequired:"Please enter a comment for this update.",
-  unitK:"K€", unitPct:"%", unitNumber:"Number (no unit)",
-  blockingTitle:"Blocking Points", blockingSub:"Track blocking points across all departments.",
-  addBlocking:"+ Add Blocking Point", newBlockingTitle:"New Blocking Point", openingDate:"Opening Date",
-  category:"Category", addNewCategory:"+ Add new category...", newCategoryPrompt:"New category name",
-  participants:"Participants / Agents", noBlocking:"No blocking points yet", noBlockingSub:"Add a blocking point to start tracking it.",
-  confirmDeleteBlocking:"Delete this blocking point?", editBlocking:"Edit Blocking Point",
-  assignmentsTitle:"Assignments", assignmentsSub:"Track tasks, owners, deadlines and evidence.",
-  addAssignment:"+ Add Assignment", newAssignmentTitle:"New Assignment", editAssignmentTitle:"Edit Assignment",
-  assignmentNumber:"#", dateOpen:"Date Open", taskDescription:"Task Description", owner:"Owner",
-  estCompletionDate:"Est. Completion Date", dateClose:"Date Close", evidence:"Evidence (URL)", status:"Status",
-  statusDone:"Done", statusBlocked:"Blocked", statusInProgress:"In Progress", addNewStatus:"+ Add new status...",
-  newStatusPrompt:"New status name", noAssignments:"No assignments yet", noAssignmentsSub:"Add an assignment to start tracking it.",
-  confirmDeleteAssignment:"Delete this assignment?", viewHistory:"History", editEstDate:"Edit Est. Completion",
-  noHistoryYet:"No changes recorded yet.", openLink:"Open link", none:"—"
+  responsible:"Responsible"
 },
 fr:{
   brandName:"VALEO-Supply team", loginTitleSetup:"Créer le compte Manager", loginSubSetup:"Vous êtes la première personne ici. Créez le compte Manager pour commencer.",
@@ -485,9 +476,8 @@ fr:{
   invalidCredentials:"Nom d'utilisateur ou mot de passe invalide.", userExists:"Ce nom d'utilisateur existe déjà.",
   logout:"Déconnexion", manager:"Manager", user:"Utilisateur",
   navUsers:"Utilisateurs & Accès", navSap:"SAP Master Data", navInventory:"Inventaire", navProjects:"Projets",
-  navBlocking:"Points Bloquants", navAssignments:"Missions",
   subClient:"Client", subSupplier:"Fournisseur", subProduction:"Production", subReception:"Réception", subShipping:"Expédition",
-  subQuality:"Qualité", subReports:"Rapports", subMain:"Aperçu",
+  subQuality:"Qualité", subTickets:"Tickets", subReports:"Rapports", subMain:"Aperçu",
   kpiTableTitle:"Suivi des KPI", addKpi:"+ Ajouter un KPI", kpiName:"Nom du KPI", currentValue:"Valeur Actuelle",
   targetValue:"Valeur Cible", targetUnit:"Unité Cible", frequency:"Fréquence", achievement:"Réalisation %",
   editValue:"Modifier la Valeur", deleteKpi:"Supprimer le KPI", cancel:"Annuler", save:"Enregistrer", create:"Créer",
@@ -506,40 +496,32 @@ fr:{
   progress:"% Avancement", comments:"Commentaires", editComment:"Modifier le Commentaire", commentTitle:"Commentaire du Jalon",
   noProjects:"Aucun projet pour le moment", noProjectsSub:"Créez votre premier projet pour suivre les jalons.",
   noMilestones:"Aucun jalon ajouté pour le moment.",
+  ticketsTitle:"Tickets", ticketsSub:"Canal de communication direct avec le Manager.",
+  openTicket:"+ Ouvrir un Ticket", newTicketTitle:"Ouvrir un Nouveau Ticket", ticketTitleField:"Titre", description:"Description",
+  errorLocation:"Emplacement de l'Erreur", uploadScreenshot:"Télécharger une Capture d'Écran", noTickets:"Aucun ticket pour le moment",
+  noTicketsSub:"Ouvrez un ticket pour signaler un problème au Manager.", status:"Statut", open:"Ouvert", closed:"Fermé",
+  editTicket:"Modifier le Ticket", closeTicket:"Fermer le Ticket", openedBy:"Ouvert par", ticketDetails:"Détails du Ticket",
   reportsTitle:"Rapports", reportsSub:"Importez et exportez des documents pour ce département.",
   importFile:"+ Importer un Fichier", exportFile:"Exporter", noFiles:"Aucun fichier importé",
   noFilesSub:"Importez votre premier document pour constituer les archives.", uploadedBy:"Importé par", fileName:"Nom du Fichier",
   selectFile:"Choisir un fichier", date:"Date", actions:"Actions", welcomeBack:"Bon retour",
   toastKpiAdded:"KPI ajouté.", toastKpiDeleted:"KPI supprimé.", toastValueUpdated:"Valeur mise à jour.",
   toastProjectCreated:"Projet créé.", toastMilestoneAdded:"Jalon ajouté.", toastMilestoneDeleted:"Jalon supprimé.",
-  toastCommentSaved:"Commentaire enregistré.", toastFileImported:"Fichier importé.", toastUserDeleted:"Utilisateur supprimé.",
+  toastCommentSaved:"Commentaire enregistré.", toastTicketOpened:"Ticket ouvert.", toastTicketUpdated:"Ticket mis à jour.",
+  toastTicketClosed:"Ticket fermé.", toastFileImported:"Fichier importé.", toastUserDeleted:"Utilisateur supprimé.",
+  reply:"Réponse du Manager", noReplyYet:"Pas encore de réponse.", writeReply:"Écrire une réponse...", saveReply:"Enregistrer la Réponse",
   currentValueShort:"Actuel", targetShort:"Cible", overview:"Aperçu", totalKpis:"Total KPI",
   onTrack:"Sur la Bonne Voie", avgAchievement:"Réalisation Moy.", totalUsers:"Total Utilisateurs", totalProjects:"Total Projets",
-  noPages:"Aucune page attribuée — contactez votre Manager.",
+  openTickets:"Tickets Ouverts", noPages:"Aucune page attribuée — contactez votre Manager.",
   requiredNoAccess:"Vous n'avez pas accès à cette page.", history:"Historique", value:"Valeur",
-  responsible:"Responsable", kpiComment:"Commentaire", editValueComment:"Commentaire (obligatoire)",
-  previousValue:"Ancien", newValue:"Nouveau", modificationDate:"Date", commentRequired:"Veuillez saisir un commentaire pour cette mise à jour.",
-  unitK:"K€", unitPct:"%", unitNumber:"Nombre (sans unité)",
-  blockingTitle:"Points Bloquants", blockingSub:"Suivez les points bloquants de tous les départements.",
-  addBlocking:"+ Ajouter un Point Bloquant", newBlockingTitle:"Nouveau Point Bloquant", openingDate:"Date d'Ouverture",
-  category:"Catégorie", addNewCategory:"+ Ajouter une catégorie...", newCategoryPrompt:"Nom de la nouvelle catégorie",
-  participants:"Participants / Agents", noBlocking:"Aucun point bloquant pour le moment", noBlockingSub:"Ajoutez un point bloquant pour commencer le suivi.",
-  confirmDeleteBlocking:"Supprimer ce point bloquant ?", editBlocking:"Modifier le Point Bloquant",
-  assignmentsTitle:"Missions", assignmentsSub:"Suivez les tâches, responsables, échéances et preuves.",
-  addAssignment:"+ Ajouter une Mission", newAssignmentTitle:"Nouvelle Mission", editAssignmentTitle:"Modifier la Mission",
-  assignmentNumber:"N°", dateOpen:"Date d'Ouverture", taskDescription:"Description de la Tâche", owner:"Responsable",
-  estCompletionDate:"Date de Fin Estimée", dateClose:"Date de Clôture", evidence:"Preuve (URL)", status:"Statut",
-  statusDone:"Terminé", statusBlocked:"Bloqué", statusInProgress:"En Cours", addNewStatus:"+ Ajouter un statut...",
-  newStatusPrompt:"Nom du nouveau statut", noAssignments:"Aucune mission pour le moment", noAssignmentsSub:"Ajoutez une mission pour commencer le suivi.",
-  confirmDeleteAssignment:"Supprimer cette mission ?", viewHistory:"Historique", editEstDate:"Modifier la Date Estimée",
-  noHistoryYet:"Aucune modification enregistrée.", openLink:"Ouvrir le lien", none:"—"
+  responsible:"Responsable"
 }
 };
 function t(key){ return (I18N[state.lang] && I18N[state.lang][key]) || key; }
 
-/* ---------------------- API LAYER (shared database on the server) ----------------------
+/* ---------------------- API LAYER (shared SQLite database on the server) ----------------------
    Every logged-in user reads/writes the SAME server-side database, so data
-   (KPIs, projects, reports, blocking points, assignments) is visible between all users.
+   (KPIs, tickets, projects, reports) is visible between Manager <-> SAP <-> Inventory <-> Projects.
    -------------------------------------------------------------------------------------------- */
 const TOKEN_KEY = "erp_auth_token";
 function getToken(){ return localStorage.getItem(TOKEN_KEY); }
@@ -570,31 +552,22 @@ function defaultDB(){
       inventory:{production:[],quality:[],shipping:[],reception:[]}
     },
     projects:[],
+    tickets:{sap:[],inventory:[],projects:[]},
     reports:{sap:[],inventory:[],projects:[]},
-    settings:{theme:"dark", lang:"en"},
-    categories:["Project","Inventory","SAP","Flow"],
-    statuses:["Done","Blocked","In Progress"],
-    blockingPoints:[],
-    assignments:[],
-    assignmentSeq:{}
+    settings:{theme:"dark", lang:"en"}
   };
 }
 let db = defaultDB();
 
-/* Pulls the shared state, the user directory, and "who am I" from the server
-   and hydrates the local `db` mirror. */
+/* Pulls the shared state (kpis/projects/tickets/reports/settings), the user
+   directory, and "who am I" from the server and hydrates the local `db` mirror. */
 async function fetchState(){
   const res = await api("/api/state");
-  const s = res.state || {};
-  db.kpis = s.kpis || defaultDB().kpis;
-  db.projects = s.projects || [];
-  db.reports = s.reports || {sap:[],inventory:[],projects:[]};
-  db.settings = s.settings || {theme:"dark",lang:"en"};
-  db.categories = (s.categories && s.categories.length) ? s.categories : ["Project","Inventory","SAP","Flow"];
-  db.statuses = (s.statuses && s.statuses.length) ? s.statuses : ["Done","Blocked","In Progress"];
-  db.blockingPoints = s.blockingPoints || [];
-  db.assignments = s.assignments || [];
-  db.assignmentSeq = s.assignmentSeq || {};
+  db.kpis = res.state.kpis;
+  db.projects = res.state.projects;
+  db.tickets = res.state.tickets;
+  db.reports = res.state.reports;
+  db.settings = res.state.settings;
   db.users = res.users;
   db.currentUser = res.me;
 }
@@ -603,11 +576,7 @@ async function fetchState(){
 function saveDB(){
   api("/api/state", {
     method:"POST",
-    body: JSON.stringify({
-      kpis:db.kpis, projects:db.projects, reports:db.reports, settings:db.settings,
-      categories:db.categories, statuses:db.statuses, blockingPoints:db.blockingPoints,
-      assignments:db.assignments, assignmentSeq:db.assignmentSeq
-    })
+    body: JSON.stringify({kpis:db.kpis, projects:db.projects, tickets:db.tickets, reports:db.reports, settings:db.settings})
   }).catch(()=> toast("Sync error — check your connection.", "err"));
 }
 
@@ -675,7 +644,7 @@ async function renderLogin(){
     needsSetup = res.needsSetup;
   }catch(e){
     box.innerHTML = `<div style="padding:10px;text-align:center;">
-      <div class="login-brand" style="justify-content:center;"><div class="mark">ST</div><h1>${t('brandName')}</h1></div>
+      <div class="login-brand" style="justify-content:center;"><div class="mark">EC</div><h1>${t('brandName')}</h1></div>
       <p class="error-msg" style="margin-top:14px;">Cannot reach the server. Is it running?</p>
     </div>`;
     return;
@@ -683,7 +652,7 @@ async function renderLogin(){
 
   if(needsSetup){
     box.innerHTML = `
-      <div class="login-brand"><div class="mark">ST</div><h1>${t('brandName')}</h1></div>
+      <div class="login-brand"><div class="mark">EC</div><h1>${t('brandName')}</h1></div>
       <div class="login-sub">${t('loginSubSetup')}</div>
       <div class="field"><label>${t('username')}</label><input id="setupUser" type="text" autocomplete="off"></div>
       <div class="field"><label>${t('password')}</label><input id="setupPass" type="password"></div>
@@ -708,7 +677,7 @@ async function renderLogin(){
     let usernames = [];
     try{ usernames = (await api("/api/usernames")).usernames; }catch(e){}
     box.innerHTML = `
-      <div class="login-brand"><div class="mark">ST</div><h1>${t('welcomeBack')}</h1></div>
+      <div class="login-brand"><div class="mark">EC</div><h1>${t('welcomeBack')}</h1></div>
       <div class="login-sub">${t('loginSub')}</div>
       <div class="field"><label>${t('username')}</label><input id="loginUser" type="text" list="userList" autocomplete="off"></div>
       <datalist id="userList">${usernames.map(u=>`<option value="${escAttr(u)}">`).join("")}</datalist>
@@ -757,7 +726,7 @@ async function bootApp(){
   document.getElementById("loginScreen").classList.add("hidden");
   document.getElementById("app").classList.remove("hidden");
   const u = currentUser();
-  const pages = (u.role==="manager" ? ["users","sap","inventory","projects"] : (u.pages||[])).concat(["blocking","assignments"]);
+  const pages = u.role==="manager" ? ["users","sap","inventory","projects"] : (u.pages||[]);
   state.page = pages[0] || null;
   state.sub = null;
   renderAll();
@@ -776,7 +745,7 @@ document.getElementById("hamburgerBtn").addEventListener("click", ()=>{
 });
 
 const NAV_ICONS = {
-  users:"👥", sap:"🗄", inventory:"📦", projects:"📁", blocking:"🚧", assignments:"📝"
+  users:"👥", sap:"🗄", inventory:"📦", projects:"📁"
 };
 function renderSidebar(){
   const u = currentUser();
@@ -785,9 +754,8 @@ function renderSidebar(){
   document.getElementById("curUserName").textContent = u.username;
   document.getElementById("curUserRole").textContent = u.role==="manager" ? t('manager') : t('user');
 
-  // "Blocking Points" and "Assignments" are visible to every logged-in user, regardless of role/page access.
-  const navPages = (u.role==="manager" ? ["users","sap","inventory","projects"] : (u.pages||[])).concat(["blocking","assignments"]);
-  const labelMap = {users:t('navUsers'), sap:t('navSap'), inventory:t('navInventory'), projects:t('navProjects'), blocking:t('navBlocking'), assignments:t('navAssignments')};
+  const navPages = u.role==="manager" ? ["users","sap","inventory","projects"] : (u.pages||[]);
+  const labelMap = {users:t('navUsers'), sap:t('navSap'), inventory:t('navInventory'), projects:t('navProjects')};
   const nav = document.getElementById("sbNav");
   nav.innerHTML = navPages.map(p=>`
     <div class="sb-item ${state.page===p?'active':''}" data-page="${p}">
@@ -815,17 +783,13 @@ function renderAll(){
    MAIN ROUTER
    ====================================================================== */
 const PAGE_TITLES = {
-  users:()=>t('navUsers'), sap:()=>t('navSap'), inventory:()=>t('navInventory'), projects:()=>t('navProjects'),
-  blocking:()=>t('navBlocking'), assignments:()=>t('navAssignments')
+  users:()=>t('navUsers'), sap:()=>t('navSap'), inventory:()=>t('navInventory'), projects:()=>t('navProjects')
 };
-const ALWAYS_ACCESSIBLE_PAGES = ["blocking","assignments"];
 function renderMain(){
   const main = document.getElementById("mainContent");
   const u = currentUser();
   if(!u || !state.page){ main.innerHTML = `<div class="empty-state glass"><div class="ic">🔒</div><p>${t('noPages')}</p></div>`; return; }
-  if(!ALWAYS_ACCESSIBLE_PAGES.includes(state.page) && !userHasPage(u, state.page)){
-    main.innerHTML = `<div class="empty-state glass"><div class="ic">🚫</div><p>${t('requiredNoAccess')}</p></div>`; return;
-  }
+  if(!userHasPage(u, state.page)){ main.innerHTML = `<div class="empty-state glass"><div class="ic">🚫</div><p>${t('requiredNoAccess')}</p></div>`; return; }
 
   document.getElementById("pageTitle").textContent = PAGE_TITLES[state.page] ? PAGE_TITLES[state.page]() : "";
   document.getElementById("pageCrumb").textContent = u.username + " / " + (PAGE_TITLES[state.page] ? PAGE_TITLES[state.page]() : "");
@@ -834,8 +798,6 @@ function renderMain(){
   if(state.page==="sap") return renderDeptPage(main, "sap", ["client","supplier","production","reception","shipping"]);
   if(state.page==="inventory") return renderDeptPage(main, "inventory", ["production","quality","shipping","reception"]);
   if(state.page==="projects") return renderProjectsPage(main);
-  if(state.page==="blocking") return renderBlockingPage(main);
-  if(state.page==="assignments") return renderAssignmentsPage(main);
 }
 
 /* ======================================================================
@@ -869,7 +831,7 @@ function renderUsersPage(main){
     <div class="stat-strip slide-up">
       <div class="glass stat-box"><div class="sv">${db.users.length}</div><div class="sl">${t('totalUsers')}</div></div>
       <div class="glass stat-box"><div class="sv">${db.projects.length}</div><div class="sl">${t('totalProjects')}</div></div>
-      <div class="glass stat-box"><div class="sv">${db.blockingPoints.length}</div><div class="sl">${t('navBlocking')}</div></div>
+      <div class="glass stat-box"><div class="sv">${countOpenTickets()}</div><div class="sl">${t('openTickets')}</div></div>
       <div class="glass stat-box"><div class="sv">${countTotalKpis()}</div><div class="sl">${t('totalKpis')}</div></div>
     </div>
     <div class="glass section-card slide-up">
@@ -894,6 +856,10 @@ function renderUsersPage(main){
       });
     };
   });
+}
+function countOpenTickets(){
+  let c=0; ["sap","inventory","projects"].forEach(p=>{ (db.tickets[p]||[]).forEach(tk=>{ if(tk.status==="open") c++; }); });
+  return c;
 }
 function countTotalKpis(){
   let c=0;
@@ -964,49 +930,15 @@ function confirmDialog(msg, onYes){
   modal.querySelector("#confirmYes").onclick = ()=>{ closeModal(); onYes(); };
 }
 
-/* Reusable "dynamic list" select: renders a <select> of `list` plus a
-   "+ Add new..." option. When chosen, an inline text field appears; on
-   submit, the caller should read getDynamicSelectValue() which returns
-   either the picked value or the freshly typed one (and appends it to
-   `list` so it's available everywhere next time). */
-function dynamicSelectHTML(id, list, selected, addLabel){
-  const opts = list.map(c=>`<option value="${escAttr(c)}" ${c===selected?'selected':''}>${escHtml(c)}</option>`).join("");
-  return `
-    <select id="${id}">
-      ${opts}
-      <option value="__new__">${addLabel}</option>
-    </select>
-    <input type="text" id="${id}_new" class="hidden" style="margin-top:8px;" placeholder="${addLabel.replace('+ ','').replace('...','')}">
-  `;
-}
-function wireDynamicSelect(modal, id){
-  const sel = modal.querySelector("#"+id);
-  const newInput = modal.querySelector("#"+id+"_new");
-  if(!sel || !newInput) return;
-  sel.addEventListener("change", ()=>{
-    newInput.classList.toggle("hidden", sel.value !== "__new__");
-    if(sel.value === "__new__") newInput.focus();
-  });
-}
-function readDynamicSelect(modal, id, list){
-  const sel = modal.querySelector("#"+id);
-  if(sel.value === "__new__"){
-    const val = modal.querySelector("#"+id+"_new").value.trim();
-    if(val && !list.includes(val)) list.push(val);
-    return val;
-  }
-  return sel.value;
-}
-
 /* ======================================================================
-   DEPARTMENT PAGES (SAP / INVENTORY) — KPI + Reports
+   DEPARTMENT PAGES (SAP / INVENTORY) — KPI + Tickets + Reports
    ====================================================================== */
 const SUB_LABEL_KEYS = {
   client:"subClient", supplier:"subSupplier", production:"subProduction", reception:"subReception",
-  shipping:"subShipping", quality:"subQuality", reports:"subReports", main:"subMain"
+  shipping:"subShipping", quality:"subQuality", tickets:"subTickets", reports:"subReports", main:"subMain"
 };
 function renderDeptPage(main, pageKey, kpiSubs){
-  const subs = [...kpiSubs, "reports"];
+  const subs = [...kpiSubs, "tickets", "reports"];
   if(!state.sub || !subs.includes(state.sub)) state.sub = subs[0];
 
   main.innerHTML = `
@@ -1022,6 +954,7 @@ function renderDeptPage(main, pageKey, kpiSubs){
     b.onclick = ()=>{ state.sub = b.dataset.sub; renderDeptPage(main, pageKey, kpiSubs); };
   });
   const body = document.getElementById("deptBody");
+  if(state.sub==="tickets") return renderTicketsSection(body, pageKey);
   if(state.sub==="reports") return renderReportsSection(body, pageKey);
   renderKpiSection(body, pageKey, state.sub);
 }
@@ -1030,8 +963,6 @@ function renderDeptPage(main, pageKey, kpiSubs){
 function getKpiArr(pageKey, subKey){ return db.kpis[pageKey][subKey]; }
 function computeAchievement(k){ if(!k.target || k.target===0) return 0; return Math.round((k.current/k.target)*1000)/10; }
 function achColor(pct){ if(pct>=90) return "green"; if(pct>=60) return "amber"; return "red"; }
-function unitSuffix(unit){ return unit==="%" ? "%" : unit==="number" ? "" : "K€"; }
-function unitLabel(unit){ return unit==="%" ? t('unitPct') : unit==="number" ? t('unitNumber') : t('unitK'); }
 
 function renderKpiSection(body, pageKey, subKey){
   const arr = getKpiArr(pageKey, subKey);
@@ -1041,13 +972,11 @@ function renderKpiSection(body, pageKey, subKey){
   const cards = arr.map(k=>{
     const ach = computeAchievement(k);
     const col = achColor(ach);
-    const suf = unitSuffix(k.unit);
     return `
       <div class="glass kpi-card slide-up ${openKpiId===k.id?'open':''}" data-kpi-card="${k.id}">
         <div class="kname">${escHtml(k.name)}</div>
-        <div class="kval">${formatNum(k.current)}<span style="font-size:13px;color:var(--text-faint);font-weight:600;"> ${suf}</span></div>
-        <div class="ktarget">${t('targetShort')}: ${formatNum(k.target)} ${suf} · <span class="freq-badge">${t(k.frequency)}</span></div>
-        ${k.comment ? `<div style="font-size:11.5px;color:var(--text-dim);margin-top:6px;font-style:italic;">"${escHtml(k.comment)}"</div>` : ""}
+        <div class="kval">${formatNum(k.current)}<span style="font-size:13px;color:var(--text-faint);font-weight:600;"> ${k.unit==='%'?'%':'K€'}</span></div>
+        <div class="ktarget">${t('targetShort')}: ${formatNum(k.target)} ${k.unit==='%'?'%':'K€'} · <span class="freq-badge">${t(k.frequency)}</span></div>
         <div class="ach-bar-track"><div class="ach-bar-fill" style="width:${Math.min(ach,100)}%;background:${col==='green'?'linear-gradient(90deg,#3ADB8F,#00D9C0)':col==='amber'?'linear-gradient(90deg,#FFB020,#ff8a20)':'linear-gradient(90deg,#FF5C6C,#ff2f4c)'}"></div></div>
         <div style="margin-top:8px;font-size:12px;font-weight:700;color:var(--${col==='green'?'green':col==='amber'?'amber':'red'})">${ach}%</div>
       </div>`;
@@ -1064,18 +993,17 @@ function renderKpiSection(body, pageKey, subKey){
       <div class="table-wrap"><table class="data-table">
         <thead><tr>
           <th>${t('kpiName')}</th><th>${t('currentValue')}</th><th>${t('targetValue')}</th>
-          <th>${t('achievement')}</th><th>${t('frequency')}</th><th>${t('kpiComment')}</th><th>${t('actions')}</th>
+          <th>${t('achievement')}</th><th>${t('frequency')}</th><th>${t('actions')}</th>
         </tr></thead>
         <tbody>
           ${arr.map(k=>{
-            const ach = computeAchievement(k); const col = achColor(ach); const suf = unitSuffix(k.unit);
+            const ach = computeAchievement(k); const col = achColor(ach);
             return `<tr>
               <td><strong>${escHtml(k.name)}</strong></td>
-              <td>${formatNum(k.current)} ${suf}</td>
-              <td>${formatNum(k.target)} ${suf}</td>
+              <td>${formatNum(k.current)} ${k.unit==='%'?'%':'K€'}</td>
+              <td>${formatNum(k.target)} ${k.unit==='%'?'%':'K€'}</td>
               <td><span class="pill pill-${col==='green'?'green':col==='amber'?'amber':'red'}">${ach}%</span></td>
               <td><span class="freq-badge">${t(k.frequency)}</span></td>
-              <td style="max-width:180px;font-size:12.5px;color:var(--text-dim);">${escHtml(k.comment||t('none'))}</td>
               <td class="row-actions">
                 <button class="btn btn-ghost btn-sm" data-edit-val="${k.id}">${t('editValue')}</button>
                 <button class="btn btn-danger btn-sm" data-del-kpi="${k.id}">${t('delete')}</button>
@@ -1124,24 +1052,12 @@ function renderChartPanel(pageKey, subKey, kpiId){
   const k = getKpiArr(pageKey, subKey).find(x=>x.id===kpiId);
   if(!k || !host) return;
   const canvasId = "chart_"+kpiId;
-  const hist = (k.history && k.history.length) ? k.history.slice().reverse() : [];
   host.innerHTML = `
     <div class="glass chart-panel slide-up">
       <div class="chart-panel-head">
         <h3>${t('variationChart')} — ${escHtml(k.name)}</h3>
       </div>
       <div class="chart-box"><canvas id="${canvasId}"></canvas></div>
-      <div style="margin-top:18px;">
-        <div style="font-size:12px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;">${t('history')}</div>
-        ${hist.length===0 ? `<div style="font-size:12.5px;color:var(--text-faint);">${t('noHistoryYet')}</div>` : `
-        <div class="history-list">
-          ${hist.map(h=>`
-            <div class="history-row">
-              <div class="hh"><span>${escHtml(h.date)}</span><span>${formatNum(h.previousValue)} → ${formatNum(h.newValue)} ${unitSuffix(k.unit)}</span></div>
-              ${h.comment ? `<div class="hc">"${escHtml(h.comment)}"</div>` : ""}
-            </div>`).join("")}
-        </div>`}
-      </div>
     </div>
   `;
   drawKpiChart(canvasId, k);
@@ -1150,9 +1066,9 @@ function drawKpiChart(canvasId, k){
   const ctx = document.getElementById(canvasId);
   if(!ctx) return;
   if(state.charts[canvasId]){ state.charts[canvasId].destroy(); }
-  const hist = (k.history && k.history.length) ? k.history : [{date:nowStr(), newValue:k.current}];
+  const hist = (k.history && k.history.length) ? k.history : [{date:nowStr(), value:k.current}];
   const labels = hist.map(h=>h.date);
-  const values = hist.map(h=> h.newValue!==undefined ? h.newValue : h.value);
+  const values = hist.map(h=>h.value);
   const isLight = state.theme==="light";
   const gridColor = isLight ? "rgba(20,30,60,0.08)" : "rgba(255,255,255,0.08)";
   const textColor = isLight ? "#4C5573" : "#95A0C2";
@@ -1189,11 +1105,7 @@ function openAddKpiModal(pageKey, subKey, body){
     <div class="two-col">
       <div class="field"><label>${t('targetValue')}</label><input id="kTarget" type="number" step="any"></div>
       <div class="field"><label>${t('targetUnit')}</label>
-        <select id="kUnit">
-          <option value="K€">${t('unitK')}</option>
-          <option value="%">${t('unitPct')}</option>
-          <option value="number">${t('unitNumber')}</option>
-        </select>
+        <select id="kUnit"><option value="K€">K€</option><option value="%">%</option></select>
       </div>
     </div>
     <div class="field"><label>${t('frequency')}</label>
@@ -1202,7 +1114,6 @@ function openAddKpiModal(pageKey, subKey, body){
         <option value="monthly">${t('monthly')}</option><option value="yearly">${t('yearly')}</option>
       </select>
     </div>
-    <div class="field"><label>${t('kpiComment')}</label><textarea id="kComment" rows="2"></textarea></div>
     <div class="error-msg" id="kErr"></div>
     <div class="modal-actions">
       <button class="btn btn-ghost" data-close>${t('cancel')}</button>
@@ -1215,24 +1126,20 @@ function openAddKpiModal(pageKey, subKey, body){
     const target = parseFloat(modal.querySelector("#kTarget").value);
     const unit = modal.querySelector("#kUnit").value;
     const freq = modal.querySelector("#kFreq").value;
-    const comment = modal.querySelector("#kComment").value.trim();
     const errEl = modal.querySelector("#kErr");
     if(!name || isNaN(target)){ errEl.textContent = t('fillAllFields'); return; }
     getKpiArr(pageKey, subKey).push({
-      id:uid("kpi"), name, current:0, target, unit, frequency:freq, comment,
-      history:[]
+      id:uid("kpi"), name, current:0, target, unit, frequency:freq,
+      history:[{date:nowStr(), value:0}]
     });
     saveDB(); closeModal(); toast(t('toastKpiAdded')); renderKpiSection(body, pageKey, subKey);
   };
 }
 function openEditValueModal(pageKey, subKey, kpiId, body){
   const k = getKpiArr(pageKey, subKey).find(x=>x.id===kpiId);
-  const suf = unitSuffix(k.unit);
   const html = `
     <div class="modal-head"><h3>${t('editValueTitle')}</h3><button class="modal-close" data-close>✕</button></div>
-    <div class="field"><label>${escHtml(k.name)} — ${t('currentValue')} (${suf||t('unitNumber')})</label><input id="vNew" type="number" step="any" value="${k.current}"></div>
-    <div class="field"><label>${t('editValueComment')}</label><textarea id="vComment" rows="3" placeholder="${t('editValueComment')}"></textarea></div>
-    <div class="error-msg" id="vErr"></div>
+    <div class="field"><label>${escHtml(k.name)} — ${t('currentValue')}</label><input id="vNew" type="number" step="any" value="${k.current}"></div>
     <div class="modal-actions">
       <button class="btn btn-ghost" data-close>${t('cancel')}</button>
       <button class="btn btn-primary" id="vSubmit">${t('save')}</button>
@@ -1241,15 +1148,10 @@ function openEditValueModal(pageKey, subKey, kpiId, body){
   const modal = openModal(html);
   modal.querySelector("#vSubmit").onclick = ()=>{
     const val = parseFloat(modal.querySelector("#vNew").value);
-    const comment = modal.querySelector("#vComment").value.trim();
-    const errEl = modal.querySelector("#vErr");
-    if(isNaN(val)){ errEl.textContent = t('fillAllFields'); return; }
-    if(!comment){ errEl.textContent = t('commentRequired'); return; }
-    const previousValue = k.current;
+    if(isNaN(val)) return;
     k.current = val;
-    k.comment = comment;
     k.history = k.history || [];
-    k.history.push({date:nowStr(), previousValue, newValue:val, comment, changedBy:currentUser().username});
+    k.history.push({date:nowStr(), value:val});
     saveDB(); closeModal(); toast(t('toastValueUpdated'));
     renderKpiSection(body, pageKey, subKey);
   };
@@ -1259,7 +1161,7 @@ function openEditValueModal(pageKey, subKey, kpiId, body){
    PROJECTS PAGE
    ====================================================================== */
 function renderProjectsPage(main){
-  const subs = ["main","reports"];
+  const subs = ["main","tickets","reports"];
   if(!state.sub || !subs.includes(state.sub)) state.sub = "main";
   main.innerHTML = `
     <div class="page-head fade-in">
@@ -1275,6 +1177,7 @@ function renderProjectsPage(main){
     b.onclick = ()=>{ state.sub=b.dataset.sub; renderProjectsPage(main); };
   });
   const body = document.getElementById("projBody");
+  if(state.sub==="tickets") return renderTicketsSection(body, "projects");
   if(state.sub==="reports") return renderReportsSection(body, "projects");
 
   const btn = document.getElementById("createProjectBtn");
@@ -1428,6 +1331,109 @@ function openEditMilestoneComment(pid, mid, body){
 }
 
 /* ======================================================================
+   TICKETS SECTION (shared: sap / inventory / projects)
+   ====================================================================== */
+function renderTicketsSection(body, pageKey){
+  const list = db.tickets[pageKey] || [];
+  body.innerHTML = `
+    <div class="glass section-card slide-up">
+      <div class="section-card-head">
+        <h3>${t('ticketsTitle')}</h3>
+        <button class="btn btn-primary btn-sm" id="openTicketBtn">${t('openTicket')}</button>
+      </div>
+      ${list.length===0 ? `<div class="empty-state"><div class="ic">🎫</div><p>${t('noTickets')}</p><p style="margin-top:4px;">${t('noTicketsSub')}</p></div>` : `
+      <div class="ticket-grid">
+        ${list.slice().reverse().map(tk=>`
+          <div class="glass ticket-card" data-ticket="${tk.id}">
+            <div class="th">
+              <h4>${escHtml(tk.title)}</h4>
+              <span class="pill ${tk.status==='open'?'pill-amber':'pill-green'}">${tk.status==='open'?t('open'):t('closed')}</span>
+            </div>
+            <p>${escHtml(tk.description)}</p>
+            <div class="meta"><span>${escHtml(tk.errorLocation||"—")}</span><span>${escHtml(tk.date)}</span></div>
+          </div>`).join("")}
+      </div>`}
+    </div>
+  `;
+  document.getElementById("openTicketBtn").onclick = ()=> openNewTicketModal(pageKey, body);
+  body.querySelectorAll("[data-ticket]").forEach(card=>{
+    card.onclick = ()=> openTicketDetail(pageKey, card.dataset.ticket, body);
+  });
+}
+function openNewTicketModal(pageKey, body){
+  const html = `
+    <div class="modal-head"><h3>${t('newTicketTitle')}</h3><button class="modal-close" data-close>✕</button></div>
+    <div class="field"><label>${t('ticketTitleField')}</label><input id="tkTitle" type="text"></div>
+    <div class="field"><label>${t('description')}</label><textarea id="tkDesc" rows="3"></textarea></div>
+    <div class="field"><label>${t('errorLocation')}</label><input id="tkLoc" type="text"></div>
+    <div class="field"><label>${t('uploadScreenshot')}</label><input id="tkFile" type="file" accept="image/*"></div>
+    <div class="error-msg" id="tkErr"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-close>${t('cancel')}</button>
+      <button class="btn btn-primary" id="tkSubmit">${t('create')}</button>
+    </div>`;
+  const modal = openModal(html);
+  modal.querySelector("#tkSubmit").onclick = ()=>{
+    const title = modal.querySelector("#tkTitle").value.trim();
+    const desc = modal.querySelector("#tkDesc").value.trim();
+    const loc = modal.querySelector("#tkLoc").value.trim();
+    const fileInput = modal.querySelector("#tkFile");
+    const errEl = modal.querySelector("#tkErr");
+    if(!title || !desc){ errEl.textContent = t('fillAllFields'); return; }
+    const finish = (screenshot)=>{
+      db.tickets[pageKey].push({
+        id:uid("tk"), title, description:desc, errorLocation:loc, screenshot:screenshot||null,
+        status:"open", openedBy:currentUser().username, date:nowStr(), reply:""
+      });
+      saveDB(); closeModal(); toast(t('toastTicketOpened'));
+      renderTicketsSection(body, pageKey);
+    };
+    if(fileInput.files && fileInput.files[0]){
+      const reader = new FileReader();
+      reader.onload = ()=> finish(reader.result);
+      reader.readAsDataURL(fileInput.files[0]);
+    } else finish(null);
+  };
+}
+function openTicketDetail(pageKey, tkId, body){
+  const tk = db.tickets[pageKey].find(x=>x.id===tkId);
+  if(!tk) return;
+  const canEditStatus = tk.status==="open";
+  const html = `
+    <div class="modal-head"><h3>${t('ticketDetails')}</h3><button class="modal-close" data-close>✕</button></div>
+    <div class="field"><label>${t('ticketTitleField')}</label><input id="dTitle" type="text" value="${escAttr(tk.title)}" ${canEditStatus?'':'disabled'}></div>
+    <div class="field"><label>${t('description')}</label><textarea id="dDesc" rows="3" ${canEditStatus?'':'disabled'}>${escHtml(tk.description)}</textarea></div>
+    <div class="field"><label>${t('errorLocation')}</label><input id="dLoc" type="text" value="${escAttr(tk.errorLocation||'')}" ${canEditStatus?'':'disabled'}></div>
+    ${tk.screenshot ? `<img class="screenshot-preview" src="${tk.screenshot}">` : ""}
+    <div class="field" style="margin-top:14px;"><label>${t('reply')}</label>
+      <textarea id="dReply" rows="3" placeholder="${t('writeReply')}">${escHtml(tk.reply||"")}</textarea>
+    </div>
+    <div style="font-size:11.5px;color:var(--text-faint);margin-top:4px;">${t('openedBy')}: ${escHtml(tk.openedBy)} · ${escHtml(tk.date)} · <span class="${tk.status==='open'?'status-open':'status-closed'}">${tk.status==='open'?t('open'):t('closed')}</span></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-close>${t('cancel')}</button>
+      <button class="btn btn-violet" id="dSaveReply">${t('saveReply')}</button>
+      ${tk.status==="open" ? `<button class="btn btn-ghost" id="dEdit">${t('editTicket')}</button><button class="btn btn-danger" id="dClose">${t('closeTicket')}</button>` : ""}
+    </div>`;
+  const modal = openModal(html, true);
+  modal.querySelector("#dSaveReply").onclick = ()=>{
+    tk.reply = modal.querySelector("#dReply").value;
+    saveDB(); toast(t('toastTicketUpdated')); closeModal(); renderTicketsSection(body, pageKey);
+  };
+  const editBtn = modal.querySelector("#dEdit");
+  if(editBtn) editBtn.onclick = ()=>{
+    tk.title = modal.querySelector("#dTitle").value.trim() || tk.title;
+    tk.description = modal.querySelector("#dDesc").value.trim() || tk.description;
+    tk.errorLocation = modal.querySelector("#dLoc").value.trim();
+    saveDB(); toast(t('toastTicketUpdated')); closeModal(); renderTicketsSection(body, pageKey);
+  };
+  const closeBtn = modal.querySelector("#dClose");
+  if(closeBtn) closeBtn.onclick = ()=>{
+    tk.status = "closed";
+    saveDB(); toast(t('toastTicketClosed')); closeModal(); renderTicketsSection(body, pageKey);
+  };
+}
+
+/* ======================================================================
    REPORTS SECTION (shared: sap / inventory / projects)
    ====================================================================== */
 function renderReportsSection(body, pageKey){
@@ -1484,230 +1490,6 @@ function formatSize(bytes){
 }
 
 /* ======================================================================
-   BLOCKING POINTS PAGE — visible & editable by every logged-in user
-   ====================================================================== */
-function renderBlockingPage(main){
-  const list = db.blockingPoints.slice().sort((a,b)=> (b.openingDate||"").localeCompare(a.openingDate||""));
-  main.innerHTML = `
-    <div class="page-head fade-in">
-      <div><h1>${t('blockingTitle')}</h1><p>${t('blockingSub')}</p></div>
-      <button class="btn btn-primary" id="addBlockingBtn">${t('addBlocking')}</button>
-    </div>
-    <div class="glass section-card slide-up">
-      ${list.length===0 ? `<div class="empty-state"><div class="ic">🚧</div><p>${t('noBlocking')}</p><p style="margin-top:4px;">${t('noBlockingSub')}</p></div>` : `
-      <div class="table-wrap"><table class="data-table">
-        <thead><tr>
-          <th>${t('category')}</th><th>${t('openingDate')}</th><th>${t('participants')}</th><th>${t('comments')}</th><th>${t('actions')}</th>
-        </tr></thead>
-        <tbody>
-          ${list.map(bp=>`
-            <tr>
-              <td><span class="tag-pill">${escHtml(bp.category)}</span></td>
-              <td>${escHtml(bp.openingDate)}</td>
-              <td style="max-width:200px;">${(bp.participants||[]).map(p=>`<span class="tag-pill">${escHtml(p)}</span>`).join(" ") || t('none')}</td>
-              <td style="max-width:260px;"><div style="font-size:12.5px;color:var(--text-dim);white-space:pre-wrap;">${escHtml(bp.comment||t('none'))}</div></td>
-              <td class="row-actions">
-                <button class="btn btn-ghost btn-sm" data-edit-blocking="${bp.id}">${t('editValue')}</button>
-                <button class="btn btn-danger btn-sm" data-del-blocking="${bp.id}">${t('delete')}</button>
-              </td>
-            </tr>`).join("")}
-        </tbody>
-      </table></div>`}
-    </div>
-  `;
-  document.getElementById("addBlockingBtn").onclick = ()=> openBlockingModal(null, main);
-  main.querySelectorAll("[data-edit-blocking]").forEach(b=>{
-    b.onclick = ()=> openBlockingModal(b.dataset.editBlocking, main);
-  });
-  main.querySelectorAll("[data-del-blocking]").forEach(b=>{
-    b.onclick = ()=>{
-      confirmDialog(t('confirmDeleteBlocking'), ()=>{
-        db.blockingPoints = db.blockingPoints.filter(x=>x.id!==b.dataset.delBlocking);
-        saveDB(); toast(t('toastUserDeleted')); renderBlockingPage(main);
-      });
-    };
-  });
-}
-function openBlockingModal(bpId, main){
-  const existing = bpId ? db.blockingPoints.find(x=>x.id===bpId) : null;
-  const html = `
-    <div class="modal-head"><h3>${existing ? t('editBlocking') : t('newBlockingTitle')}</h3><button class="modal-close" data-close>✕</button></div>
-    <div class="field"><label>${t('openingDate')}</label><input id="bpDate" type="date" value="${existing ? escAttr(existing.openingDate) : new Date().toISOString().slice(0,10)}"></div>
-    <div class="field"><label>${t('category')}</label>${dynamicSelectHTML('bpCategory', db.categories, existing ? existing.category : db.categories[0], t('addNewCategory'))}</div>
-    <div class="field"><label>${t('participants')}</label><input id="bpParticipants" type="text" placeholder="Name 1, Name 2..." value="${existing ? escAttr((existing.participants||[]).join(', ')) : ''}"></div>
-    <div class="field"><label>${t('comments')}</label><textarea id="bpComment" rows="3">${existing ? escHtml(existing.comment||'') : ''}</textarea></div>
-    <div class="error-msg" id="bpErr"></div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" data-close>${t('cancel')}</button>
-      <button class="btn btn-primary" id="bpSubmit">${t('save')}</button>
-    </div>`;
-  const modal = openModal(html);
-  wireDynamicSelect(modal, 'bpCategory');
-  modal.querySelector("#bpSubmit").onclick = ()=>{
-    const openingDate = modal.querySelector("#bpDate").value;
-    const category = readDynamicSelect(modal, 'bpCategory', db.categories);
-    const participants = modal.querySelector("#bpParticipants").value.split(",").map(s=>s.trim()).filter(Boolean);
-    const comment = modal.querySelector("#bpComment").value.trim();
-    const errEl = modal.querySelector("#bpErr");
-    if(!openingDate || !category){ errEl.textContent = t('fillAllFields'); return; }
-    if(existing){
-      existing.openingDate = openingDate; existing.category = category;
-      existing.participants = participants; existing.comment = comment;
-    } else {
-      db.blockingPoints.push({
-        id:uid("bp"), openingDate, category, participants, comment,
-        createdBy:currentUser().username, createdAt:nowStr()
-      });
-    }
-    saveDB(); closeModal(); toast(t('save')); renderBlockingPage(main);
-  };
-}
-
-/* ======================================================================
-   ASSIGNMENTS PAGE — visible & editable by every logged-in user
-   ====================================================================== */
-function statusPillClass(status){
-  const s = (status||"").toLowerCase();
-  if(s==="done") return "pill-green";
-  if(s==="blocked") return "pill-red";
-  if(s==="in progress") return "pill-amber";
-  return "pill-violet";
-}
-function renderAssignmentsPage(main){
-  const list = db.assignments.slice().sort((a,b)=> (b.year-a.year) || (b.number-a.number));
-  main.innerHTML = `
-    <div class="page-head fade-in">
-      <div><h1>${t('assignmentsTitle')}</h1><p>${t('assignmentsSub')}</p></div>
-      <button class="btn btn-primary" id="addAssignmentBtn">${t('addAssignment')}</button>
-    </div>
-    <div class="glass section-card slide-up">
-      ${list.length===0 ? `<div class="empty-state"><div class="ic">📝</div><p>${t('noAssignments')}</p><p style="margin-top:4px;">${t('noAssignmentsSub')}</p></div>` : `
-      <div class="table-wrap"><table class="data-table">
-        <thead><tr>
-          <th>${t('assignmentNumber')}</th><th>${t('category')}</th><th>${t('dateOpen')}</th><th>${t('taskDescription')}</th>
-          <th>${t('owner')}</th><th>${t('estCompletionDate')}</th><th>${t('dateClose')}</th><th>${t('evidence')}</th>
-          <th>${t('status')}</th><th>${t('actions')}</th>
-        </tr></thead>
-        <tbody>
-          ${list.map(a=>`
-            <tr>
-              <td><strong>${String(a.number).padStart(3,'0')}/${a.year}</strong></td>
-              <td><span class="tag-pill">${escHtml(a.category)}</span></td>
-              <td>${escHtml(a.dateOpen||t('none'))}</td>
-              <td style="max-width:220px;"><div style="font-size:12.5px;color:var(--text-dim);white-space:pre-wrap;">${escHtml(a.description||t('none'))}</div></td>
-              <td>${escHtml(a.owner||t('none'))}</td>
-              <td>${escHtml(a.estCompletionDate||t('none'))}</td>
-              <td>${escHtml(a.dateClose||t('none'))}</td>
-              <td>${a.evidenceUrl ? `<a class="evidence-link" href="${escAttr(a.evidenceUrl)}" target="_blank" rel="noopener">${t('openLink')} ↗</a>` : t('none')}</td>
-              <td><span class="pill ${statusPillClass(a.status)}">${escHtml(a.status)}</span></td>
-              <td class="row-actions">
-                <button class="btn btn-ghost btn-sm" data-edit-assignment="${a.id}">${t('editValue')}</button>
-                <button class="btn btn-ghost btn-sm" data-history-assignment="${a.id}">${t('viewHistory')}</button>
-                <button class="btn btn-danger btn-sm" data-del-assignment="${a.id}">${t('delete')}</button>
-              </td>
-            </tr>`).join("")}
-        </tbody>
-      </table></div>`}
-    </div>
-  `;
-  document.getElementById("addAssignmentBtn").onclick = ()=> openAssignmentModal(null, main);
-  main.querySelectorAll("[data-edit-assignment]").forEach(b=>{
-    b.onclick = ()=> openAssignmentModal(b.dataset.editAssignment, main);
-  });
-  main.querySelectorAll("[data-history-assignment]").forEach(b=>{
-    b.onclick = ()=> openAssignmentHistoryModal(b.dataset.historyAssignment);
-  });
-  main.querySelectorAll("[data-del-assignment]").forEach(b=>{
-    b.onclick = ()=>{
-      confirmDialog(t('confirmDeleteAssignment'), ()=>{
-        db.assignments = db.assignments.filter(x=>x.id!==b.dataset.delAssignment);
-        saveDB(); toast(t('toastUserDeleted')); renderAssignmentsPage(main);
-      });
-    };
-  });
-}
-function nextAssignmentNumber(){
-  const year = new Date().getFullYear();
-  const next = (db.assignmentSeq[year] || 0) + 1;
-  return {year, number:next};
-}
-function openAssignmentModal(aId, main){
-  const existing = aId ? db.assignments.find(x=>x.id===aId) : null;
-  const html = `
-    <div class="modal-head"><h3>${existing ? t('editAssignmentTitle') : t('newAssignmentTitle')}</h3><button class="modal-close" data-close>✕</button></div>
-    <div class="two-col">
-      <div class="field"><label>${t('category')}</label>${dynamicSelectHTML('asCategory', db.categories, existing ? existing.category : db.categories[0], t('addNewCategory'))}</div>
-      <div class="field"><label>${t('status')}</label>${dynamicSelectHTML('asStatus', db.statuses, existing ? existing.status : db.statuses[2], t('addNewStatus'))}</div>
-    </div>
-    <div class="two-col">
-      <div class="field"><label>${t('dateOpen')}</label><input id="asDateOpen" type="date" value="${existing ? escAttr(existing.dateOpen) : new Date().toISOString().slice(0,10)}"></div>
-      <div class="field"><label>${t('owner')}</label><input id="asOwner" type="text" value="${existing ? escAttr(existing.owner||'') : ''}"></div>
-    </div>
-    <div class="field"><label>${t('taskDescription')}</label><textarea id="asDesc" rows="4">${existing ? escHtml(existing.description||'') : ''}</textarea></div>
-    <div class="two-col">
-      <div class="field"><label>${t('estCompletionDate')}</label><input id="asEstDate" type="date" value="${existing ? escAttr(existing.estCompletionDate||'') : ''}"></div>
-      <div class="field"><label>${t('dateClose')}</label><input id="asDateClose" type="date" value="${existing ? escAttr(existing.dateClose||'') : ''}"></div>
-    </div>
-    <div class="field"><label>${t('evidence')}</label><input id="asEvidence" type="url" placeholder="https://..." value="${existing ? escAttr(existing.evidenceUrl||'') : ''}"></div>
-    <div class="error-msg" id="asErr"></div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" data-close>${t('cancel')}</button>
-      <button class="btn btn-primary" id="asSubmit">${t('save')}</button>
-    </div>`;
-  const modal = openModal(html, true);
-  wireDynamicSelect(modal, 'asCategory');
-  wireDynamicSelect(modal, 'asStatus');
-  modal.querySelector("#asSubmit").onclick = ()=>{
-    const category = readDynamicSelect(modal, 'asCategory', db.categories);
-    const status = readDynamicSelect(modal, 'asStatus', db.statuses);
-    const dateOpen = modal.querySelector("#asDateOpen").value;
-    const owner = modal.querySelector("#asOwner").value.trim();
-    const description = modal.querySelector("#asDesc").value.trim();
-    const estCompletionDate = modal.querySelector("#asEstDate").value;
-    const dateClose = modal.querySelector("#asDateClose").value;
-    const evidenceUrl = modal.querySelector("#asEvidence").value.trim();
-    const errEl = modal.querySelector("#asErr");
-    if(!category || !dateOpen || !description){ errEl.textContent = t('fillAllFields'); return; }
-    if(existing){
-      // Track estimated-completion-date changes in history.
-      if(existing.estCompletionDate !== estCompletionDate){
-        existing.estHistory = existing.estHistory || [];
-        existing.estHistory.push({date:nowStr(), previousDate:existing.estCompletionDate||t('none'), newDate:estCompletionDate||t('none'), changedBy:currentUser().username});
-      }
-      Object.assign(existing, {category, status, dateOpen, owner, description, estCompletionDate, dateClose, evidenceUrl});
-    } else {
-      const {year, number} = nextAssignmentNumber();
-      db.assignmentSeq[year] = number;
-      db.assignments.push({
-        id:uid("as"), number, year, category, status, dateOpen, owner, description,
-        estCompletionDate, dateClose, evidenceUrl, estHistory:[],
-        createdBy:currentUser().username, createdAt:nowStr()
-      });
-    }
-    saveDB(); closeModal(); toast(t('save')); renderAssignmentsPage(main);
-  };
-}
-function openAssignmentHistoryModal(aId){
-  const a = db.assignments.find(x=>x.id===aId);
-  if(!a) return;
-  const hist = (a.estHistory||[]).slice().reverse();
-  const html = `
-    <div class="modal-head"><h3>${t('viewHistory')} — #${String(a.number).padStart(3,'0')}/${a.year}</h3><button class="modal-close" data-close>✕</button></div>
-    ${hist.length===0 ? `<div class="empty-state"><p>${t('noHistoryYet')}</p></div>` : `
-    <div class="history-list">
-      ${hist.map(h=>`
-        <div class="history-row">
-          <div class="hh"><span>${escHtml(h.date)}</span><span>${escHtml(h.changedBy)}</span></div>
-          <div class="hv">${t('estCompletionDate')}: ${escHtml(h.previousDate)} → ${escHtml(h.newDate)}</div>
-        </div>`).join("")}
-    </div>`}
-    <div class="modal-actions">
-      <button class="btn btn-ghost" data-close>${t('cancel')}</button>
-    </div>`;
-  openModal(html, true);
-}
-
-/* ======================================================================
    INIT
    ====================================================================== */
 (async function init(){
@@ -1722,3 +1504,6 @@ function openAssignmentHistoryModal(aId){
 </script>
 </body>
 </html>
+
+
+

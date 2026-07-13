@@ -24,9 +24,13 @@ const DEFAULT_STATE = {
     inventory: { production: [], quality: [], shipping: [], reception: [] }
   },
   projects: [],
-  tickets: { sap: [], inventory: [], projects: [] },
   reports: { sap: [], inventory: [], projects: [] },
-  settings: { theme: "dark", lang: "en" }
+  settings: { theme: "dark", lang: "en" },
+  categories: ["Project", "Inventory", "SAP", "Flow"],
+  statuses: ["Done", "Blocked", "In Progress"],
+  blockingPoints: [],
+  assignments: [],
+  assignmentSeq: {}
 };
 function defaultDB() {
   return { users: [], sessions: [], appState: JSON.parse(JSON.stringify(DEFAULT_STATE)) };
@@ -205,9 +209,13 @@ app.post("/api/state", auth, (req, res) => {
   store.appState = {
     kpis: incoming.kpis || DEFAULT_STATE.kpis,
     projects: incoming.projects || [],
-    tickets: incoming.tickets || DEFAULT_STATE.tickets,
     reports: incoming.reports || DEFAULT_STATE.reports,
-    settings: incoming.settings || DEFAULT_STATE.settings
+    settings: incoming.settings || DEFAULT_STATE.settings,
+    categories: incoming.categories || DEFAULT_STATE.categories,
+    statuses: incoming.statuses || DEFAULT_STATE.statuses,
+    blockingPoints: incoming.blockingPoints || [],
+    assignments: incoming.assignments || [],
+    assignmentSeq: incoming.assignmentSeq || {}
   };
   persist();
   res.json({ ok: true });
