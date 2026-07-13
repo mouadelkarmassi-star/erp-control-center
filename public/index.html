@@ -1198,8 +1198,12 @@ function renderKpiSection(body, pageKey, subKey){
     renderChartPanel(pageKey, subKey, openKpiId);
   }
 }
-function formatNum(n){ n = Number(n)||0; return n.toLocaleString(undefined,{maximumFractionDigits:2}); }
-
+function formatNum(n){
+  if(n===null || n===undefined || n==="") return "0";
+  const num = Number(n);
+  if(isNaN(num)) return String(n); // texte non numérique : affiché tel quel
+  return num.toLocaleString(undefined,{maximumFractionDigits:2});
+}
 function toggleKpiChart(pageKey, subKey, kpiId, body){
   const key = pageKey+"."+subKey;
   if(state.openCharts[key]===kpiId){ delete state.openCharts[key]; }
@@ -1326,12 +1330,13 @@ function openEditValueModal(pageKey, subKey, kpiId, body){
       <button class="btn btn-primary" id="vSubmit">${t('save')}</button>
     </div>
   `;
+  
   const modal = openModal(html);
   modal.querySelector("#vSubmit").onclick = ()=>{
-    const val = parseFloat(modal.querySelector("#vNew").value);
+    const val = modal.querySelector("#vNew").value.trim();
     const comment = modal.querySelector("#vComment").value.trim();
     const errEl = modal.querySelector("#vErr");
-    if(isNaN(val)){ errEl.textContent = t('fillAllFields'); return; }
+    if(val===""){ errEl.textContent = t('fillAllFields'); return; }
     if(!comment){ errEl.textContent = t('commentRequired'); return; }
     const previousValue = k.current;
     k.current = val;
