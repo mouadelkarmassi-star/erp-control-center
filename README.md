@@ -102,5 +102,6 @@ projets, rapports) — contrairement à la version précédente qui stockait tou
 navigateur de chacun.
 
 --- for wiping the data base ---
+
 curl -X POST "https://erp-control-center-production.up.railway.app/api/admin/reset?key=Valeo2026Reset"
 
