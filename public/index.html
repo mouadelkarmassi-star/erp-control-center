@@ -345,6 +345,86 @@ textarea.comment-box{width:100%;min-height:50px;font-size:12.5px;padding:8px 10p
 .history-row .hv{color:var(--text);}
 .history-row .hc{color:var(--text-dim);margin-top:4px;font-style:italic;}
 
+/* NEW STYLES FOR BLOCKING POINTS PARTICIPANT TABLE */
+.participant-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+.participant-table th,
+.participant-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-soft);
+  vertical-align: top;
+}
+.participant-table th {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--text-faint);
+  font-weight: 700;
+}
+.participant-table tbody tr:last-child td {
+  border-bottom: none;
+}
+.participant-comment-field {
+  width: 100%;
+  min-height: 60px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: rgba(127,140,180,.08);
+  color: var(--text);
+  font-family: var(--ff-body);
+  font-size: 13px;
+  resize: vertical;
+}
+.participant-comment-field:disabled {
+  background: rgba(127,140,180,.04);
+  color: var(--text-dim);
+  cursor: not-allowed;
+}
+.participant-row-other .other-name-input {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: rgba(127,140,180,.08);
+  color: var(--text);
+  font-family: var(--ff-body);
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+/* PARTICIPANT SELECTION IN MODAL */
+.participant-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.participant-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(127,140,180,0.08);
+  cursor: pointer;
+  font-size: 13px;
+  transition: .2s;
+}
+.participant-chip.selected {
+  border-color: var(--accent);
+  background: rgba(0,217,192,.12);
+  color: var(--accent);
+}
+.participant-chip input {
+  accent-color: var(--accent);
+}
+
 @media (max-width:960px){
   .sidebar{position:fixed;left:-280px;top:0;height:100vh;transition:left .3s ease;box-shadow:0 0 0 100vmax rgba(0,0,0,0);}
   .sidebar.open{left:0;box-shadow:20px 0 60px rgba(0,0,0,.4);}
@@ -748,7 +828,8 @@ async function bootApp(){
     await fetchState();
   }catch(e){
     setToken(null);
-    document.getElementById("loginScreen").classList.remove("hidden");
+    document.getElementById("loginScreen").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
     renderLogin();
     return;
   }
@@ -1486,6 +1567,9 @@ function formatSize(bytes){
 /* ======================================================================
    BLOCKING POINTS PAGE — visible & editable by every logged-in user
    ====================================================================== */
+// Default participant categories
+const DEFAULT_PARTICIPANTS = ["SAP", "Inventory", "Projects", "Supervisor"];
+
 function renderBlockingPage(main){
   const list = db.blockingPoints.slice().sort((a,b)=> (b.openingDate||"").localeCompare(a.openingDate||""));
   main.innerHTML = `
@@ -1505,7 +1589,13 @@ function renderBlockingPage(main){
               <td><span class="tag-pill">${escHtml(bp.category)}</span></td>
               <td>${escHtml(bp.openingDate)}</td>
               <td style="max-width:200px;">${(bp.participants||[]).map(p=>`<span class="tag-pill">${escHtml(p)}</span>`).join(" ") || t('none')}</td>
-              <td style="max-width:260px;"><div style="font-size:12.5px;color:var(--text-dim);white-space:pre-wrap;">${escHtml(bp.comment||t('none'))}</div></td>
+              <td style="max-width:260px;">
+                <div style="font-size:12.5px;color:var(--text-dim);">
+                  ${Object.entries(bp.participantComments || {}).map(([participant, comment]) => 
+                    `<div><strong>${escHtml(participant)}:</strong> ${escHtml(comment || t('none'))}</div>`
+                  ).join("")}
+                </div>
+              </td>
               <td class="row-actions">
                 <button class="btn btn-ghost btn-sm" data-edit-blocking="${bp.id}">${t('editValue')}</button>
                 <button class="btn btn-danger btn-sm" data-del-blocking="${bp.id}">${t('delete')}</button>
@@ -1528,38 +1618,207 @@ function renderBlockingPage(main){
     };
   });
 }
+
 function openBlockingModal(bpId, main){
   const existing = bpId ? db.blockingPoints.find(x=>x.id===bpId) : null;
+  
+  // Initialize participant selection state
+  const selectedParticipants = new Set(existing?.participants || []);
+  const customParticipants = (existing?.customParticipants || []).slice();
+  const participantComments = existing?.participantComments || {};
+  
+  // Build participant selector HTML
+  const participantSelectorHTML = DEFAULT_PARTICIPANTS.map(participant => `
+    <label class="participant-chip ${selectedParticipants.has(participant) ? 'selected' : ''}">
+      <input type="checkbox" value="${escAttr(participant)}" ${selectedParticipants.has(participant) ? 'checked' : ''}>
+      <span>${escHtml(participant)}</span>
+    </label>
+  `).join('');
+  
+  // Build custom participant inputs
+  let customParticipantInputs = '';
+  if (customParticipants.length > 0) {
+    customParticipantInputs = customParticipants.map((name, index) => `
+      <div class="participant-chip selected participant-row-other">
+        <input type="checkbox" value="custom_${index}" checked disabled>
+        <input type="text" class="other-name-input" value="${escAttr(name)}" placeholder="Custom participant name">
+      </div>
+    `).join('');
+  }
+  
   const html = `
     <div class="modal-head"><h3>${existing ? t('editBlocking') : t('newBlockingTitle')}</h3><button class="modal-close" data-close>✕</button></div>
     <div class="field"><label>${t('openingDate')}</label><input id="bpDate" type="date" value="${existing ? escAttr(existing.openingDate) : new Date().toISOString().slice(0,10)}"></div>
     <div class="field"><label>${t('category')}</label>${dynamicSelectHTML('bpCategory', db.categories, existing ? existing.category : db.categories[0], t('addNewCategory'))}</div>
-    <div class="field"><label>${t('participants')}</label><input id="bpParticipants" type="text" placeholder="Name 1, Name 2..." value="${existing ? escAttr((existing.participants||[]).join(', ')) : ''}"></div>
-    <div class="field"><label>${t('comments')}</label><textarea id="bpComment" rows="3">${existing ? escHtml(existing.comment||'') : ''}</textarea></div>
+    <div class="field">
+      <label>${t('participants')}</label>
+      <div class="participant-selector" id="participantSelector">
+        ${participantSelectorHTML}
+        <label class="participant-chip" id="addOtherChip">
+          <input type="checkbox" value="other">
+          <span>Other</span>
+        </label>
+        ${customParticipantInputs}
+      </div>
+    </div>
+    <div class="field">
+      <label>Participant Comments</label>
+      <table class="participant-table">
+        <thead>
+          <tr>
+            <th>Participant</th>
+            <th>Comment</th>
+          </tr>
+        </thead>
+        <tbody id="participantCommentsBody">
+          <!-- Will be populated dynamically -->
+        </tbody>
+      </table>
+    </div>
     <div class="error-msg" id="bpErr"></div>
     <div class="modal-actions">
       <button class="btn btn-ghost" data-close>${t('cancel')}</button>
       <button class="btn btn-primary" id="bpSubmit">${t('save')}</button>
     </div>`;
+  
   const modal = openModal(html);
   wireDynamicSelect(modal, 'bpCategory');
+  
+  // Handle participant selection changes
+  const participantSelector = modal.querySelector('#participantSelector');
+  const addOtherChip = modal.querySelector('#addOtherChip');
+  const commentsBody = modal.querySelector('#participantCommentsBody');
+  
+  // Function to update comments table
+  function updateCommentsTable() {
+    const selected = Array.from(participantSelector.querySelectorAll('.participant-chip.selected input[type="checkbox"]'))
+      .map(cb => {
+        if (cb.value.startsWith('custom_')) {
+          const index = parseInt(cb.value.split('_')[1]);
+          const input = cb.closest('.participant-row-other').querySelector('.other-name-input');
+          return input.value.trim() || `Custom ${index + 1}`;
+        }
+        return cb.value;
+      })
+      .filter(name => name && name !== 'other');
+    
+    // Remove duplicates while preserving order
+    const uniqueParticipants = [...new Set(selected)];
+    
+    commentsBody.innerHTML = uniqueParticipants.map(participant => `
+      <tr>
+        <td>${escHtml(participant)}</td>
+        <td>
+          <textarea class="participant-comment-field" data-participant="${escAttr(participant)}" rows="3">${escHtml(participantComments[participant] || '')}</textarea>
+        </td>
+      </tr>
+    `).join('');
+  }
+  
+  // Initial comments table population
+  updateCommentsTable();
+  
+  // Handle checkbox changes
+  participantSelector.addEventListener('change', (e) => {
+    const target = e.target;
+    if (target.type === 'checkbox') {
+      const chip = target.closest('.participant-chip');
+      if (target.value === 'other') {
+        if (target.checked) {
+          // Add new custom participant input
+          const customIndex = customParticipants.length;
+          const customInput = document.createElement('div');
+          customInput.className = 'participant-chip selected participant-row-other';
+          customInput.innerHTML = `
+            <input type="checkbox" value="custom_${customIndex}" checked disabled>
+            <input type="text" class="other-name-input" placeholder="Custom participant name" autofocus>
+          `;
+          participantSelector.insertBefore(customInput, addOtherChip);
+          customParticipants.push('');
+          target.checked = false; // Uncheck "Other" after adding
+        }
+      } else {
+        chip.classList.toggle('selected', target.checked);
+      }
+      updateCommentsTable();
+    }
+  });
+  
+  // Handle custom participant name changes
+  participantSelector.addEventListener('input', (e) => {
+    if (e.target.classList.contains('other-name-input')) {
+      const chip = e.target.closest('.participant-row-other');
+      const checkbox = chip.querySelector('input[type="checkbox"]');
+      const oldName = checkbox.value;
+      const newName = e.target.value.trim();
+      
+      // Update participantComments mapping
+      if (participantComments[oldName]) {
+        participantComments[newName] = participantComments[oldName];
+        delete participantComments[oldName];
+      }
+      
+      // Update checkbox value
+      const index = parseInt(oldName.split('_')[1]);
+      checkbox.value = `custom_${index}`;
+      
+      updateCommentsTable();
+    }
+  });
+  
   modal.querySelector("#bpSubmit").onclick = ()=>{
     const openingDate = modal.querySelector("#bpDate").value;
     const category = readDynamicSelect(modal, 'bpCategory', db.categories);
-    const participants = modal.querySelector("#bpParticipants").value.split(",").map(s=>s.trim()).filter(Boolean);
-    const comment = modal.querySelector("#bpComment").value.trim();
     const errEl = modal.querySelector("#bpErr");
-    if(!openingDate || !category){ errEl.textContent = t('fillAllFields'); return; }
+    
+    if(!openingDate || !category){ 
+      errEl.textContent = t('fillAllFields'); 
+      return; 
+    }
+    
+    // Collect selected participants
+    const selectedParticipants = Array.from(participantSelector.querySelectorAll('.participant-chip.selected input[type="checkbox"]'))
+      .map(cb => {
+        if (cb.value.startsWith('custom_')) {
+          const input = cb.closest('.participant-row-other').querySelector('.other-name-input');
+          return input.value.trim();
+        }
+        return cb.value;
+      })
+      .filter(name => name && name !== 'other');
+    
+    // Remove duplicates while preserving order
+    const uniqueParticipants = [...new Set(selectedParticipants)];
+    
+    // Collect comments
+    const newParticipantComments = {};
+    modal.querySelectorAll('.participant-comment-field').forEach(field => {
+      const participant = field.dataset.participant;
+      newParticipantComments[participant] = field.value.trim();
+    });
+    
     if(existing){
-      existing.openingDate = openingDate; existing.category = category;
-      existing.participants = participants; existing.comment = comment;
+      existing.openingDate = openingDate; 
+      existing.category = category;
+      existing.participants = uniqueParticipants;
+      existing.participantComments = newParticipantComments;
+      existing.customParticipants = customParticipants.filter(name => name.trim());
     } else {
       db.blockingPoints.push({
-        id:uid("bp"), openingDate, category, participants, comment,
-        createdBy:currentUser().username, createdAt:nowStr()
+        id:uid("bp"), 
+        openingDate, 
+        category, 
+        participants: uniqueParticipants,
+        participantComments: newParticipantComments,
+        customParticipants: customParticipants.filter(name => name.trim()),
+        createdBy:currentUser().username, 
+        createdAt:nowStr()
       });
     }
-    saveDB(); closeModal(); toast(t('save')); renderBlockingPage(main);
+    saveDB(); 
+    closeModal(); 
+    toast(t('save')); 
+    renderBlockingPage(main);
   };
 }
 
